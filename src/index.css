@@ -1,50 +1,53 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Frutiger Bold';
+  src: local('Frutiger LT Std Bold'), local('Frutiger Bold'), local('Frutiger-Bold');
+  font-weight: 700;
+  font-style: normal;
+}
+
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 30% 12%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 30% 12%;
+    --card-foreground: 0 0% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 30% 12%;
+    --popover-foreground: 0 0% 13%;
 
-    --primary: 215 65% 18%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 0 0% 13%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 175 45% 38%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 13%;
 
-    --muted: 210 20% 94%;
-    --muted-foreground: 215 15% 46%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 175 45% 38%;
+    --accent: 0 85% 46%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214 25% 88%;
-    --input: 214 25% 88%;
-    --ring: 215 65% 18%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 85% 46%;
 
-    --radius: 0.5rem;
+    --radius: 0.375rem;
 
-    --navy-deep: 215 65% 12%;
-    --navy-mid: 215 55% 22%;
-    --teal: 175 45% 38%;
-    --teal-light: 175 40% 92%;
-    --gold: 42 78% 55%;
-    --slate-light: 210 20% 96%;
-
-    --font-heading: 'Playfair Display', serif;
-    --font-body: 'Inter', sans-serif;
+    --cygnus-red: 0 85% 46%;
+    --cygnus-dark: 0 0% 13%;
+    --cygnus-gray: 0 0% 40%;
+    --cygnus-light: 0 0% 97%;
+    --cygnus-silver: 0 0% 75%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -63,23 +66,25 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-body);
+    font-family: Arial, Helvetica, sans-serif;
   }
-  h1, h2, h3, h4 {
-    font-family: var(--font-heading);
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Frutiger Bold', 'Trebuchet MS', Arial, sans-serif;
+    font-weight: 700;
   }
 }
 
 @layer utilities {
-  .gradient-navy {
-    background: linear-gradient(135deg, hsl(var(--navy-deep)), hsl(var(--navy-mid)));
+  .gradient-dark {
+    background: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 18%));
   }
-  .gradient-teal {
-    background: linear-gradient(135deg, hsl(var(--teal)), hsl(175 50% 32%));
+  .bg-cygnus-red {
+    background-color: hsl(var(--cygnus-red));
   }
-  .text-gradient-teal {
-    background: linear-gradient(135deg, hsl(var(--teal)), hsl(175 50% 28%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .text-cygnus-red {
+    color: hsl(var(--cygnus-red));
+  }
+  .text-justify-all {
+    text-align: justify;
   }
 }
