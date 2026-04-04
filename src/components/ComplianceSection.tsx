@@ -5,11 +5,11 @@ const pillars = [
   {
     icon: FileCheck,
     title: "PDPA 2010 (Act 709)",
-    text: "Full compliance with Malaysia's Personal Data Protection Act 2010, ensuring lawful processing, storage, and handling of personal data.",
+    text: "Full compliance with Malaysia's Personal Data Protection Act 2010, ensuring lawful processing, storage, and handling of personal data. Aligned with the latest 2024 amendments including mandatory breach notification, enhanced penalties, and strengthened data subject rights.",
   },
   {
     icon: Shield,
-    title: "2024 Amendment Act",
+    title: "ESG",
     text: "Aligned with the latest 2024 amendments including mandatory breach notification, enhanced penalties, and strengthened data subject rights.",
   },
   {
