@@ -53,8 +53,7 @@ const AboutSection = () => (
         </h2>
         <p className="text-muted-foreground leading-relaxed text-center whitespace-pre-line">
           CygnusCloud® is a single‑tenant, enterprise‑grade cloud solution purpose‑built for Malaysian businesses that demand data sovereignty, PDPA compliance, and DPO assurance. 
-          {"\n"}Unlike conventional hosting providers, we are not a Virtual Private Server (VPS) provider and we do not offer generic Dedicated Servers.
-          {"\n"}Instead, we deliver true Virtual Machines (VMs) engineered for enterprises that must safeguard sensitive information while meeting strict regulatory requirements.
+          {"\n"}Unlike conventional hosting providers, we are not a Virtual Private Server (VPS) provider and we do not offer generic Dedicated Servers; Instead, we deliver true Virtual Machines (VMs) engineered for enterprises that must safeguard sensitive information while meeting strict regulatory requirements.
         </p>
       </div>
 
