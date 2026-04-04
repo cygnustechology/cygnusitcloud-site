@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Cloud,
@@ -10,8 +11,10 @@ import {
   ArrowRight,
   Building2,
   Home,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import solutionsPyramid from "@/assets/solutions-pyramid.webp";
 
 const highlights = [
   {
@@ -40,7 +43,10 @@ const highlights = [
   },
 ];
 
-const AboutSection = () => (
+const AboutSection = () => {
+  const [showPyramid, setShowPyramid] = useState(false);
+
+  return (
   <section id="about" className="py-20 md:py-28 bg-background">
     <div className="container mx-auto px-4">
       {/* Section Header */}
@@ -194,26 +200,46 @@ const AboutSection = () => (
                   </span>
                 ))}
               </div>
-              <Button
-                asChild
-                variant="link"
-                className="text-cygnus-red hover:text-cygnus-red/80 p-0 h-auto font-semibold"
+              <button
+                onClick={() => setShowPyramid(true)}
+                className="inline-flex items-center text-cygnus-red hover:text-cygnus-red/80 font-semibold p-0 h-auto"
               >
-                <a
-                  href="https://cygnus.com.my/solutions"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View Our Strategic Pillars
-                  <ArrowRight className="w-4 h-4 ml-1" />
-                </a>
-              </Button>
+                View Our Strategic Pillars
+                <ArrowRight className="w-4 h-4 ml-1" />
+              </button>
             </div>
           </div>
         </div>
       </motion.div>
+
+      {/* Pyramid Modal */}
+      {showPyramid && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 backdrop-blur-sm" onClick={() => setShowPyramid(false)}>
+          <div className="relative bg-card rounded-lg shadow-xl max-w-lg w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowPyramid(false)}
+              className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <img src={solutionsPyramid} alt="Cygnus Strategic Solutions Pyramid" className="w-full rounded-md mb-4" />
+            <div className="text-center">
+              <a
+                href="https://www.cygnus.com.my"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-cygnus-red hover:text-cygnus-red/80 font-semibold"
+              >
+                Learn More
+                <ArrowRight className="w-4 h-4" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   </section>
-);
+  );
+};
 
 export default AboutSection;
