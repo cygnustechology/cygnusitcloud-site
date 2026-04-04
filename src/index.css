@@ -1,15 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: 'Frutiger Bold';
-  src: local('Frutiger LT Std Bold'), local('Frutiger Bold'), local('Frutiger-Bold');
-  font-weight: 700;
-  font-style: normal;
-}
 
 @layer base {
   :root {
