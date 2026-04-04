@@ -84,8 +84,8 @@ const ContactSection = () => {
                 <MapPin className="w-5 h-5 text-cygnus-red mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Office</p>
-                  <p className="text-sm text-muted-foreground">
-                    Kuala Lumpur, Malaysia
+                  <p className="text-sm text-muted-foreground text-justify">
+                    D3-12-1, Jalan Dutamas 3, Taman Dutamas, 43200 Cheras, Selangor, Malaysia.
                   </p>
                 </div>
               </div>
