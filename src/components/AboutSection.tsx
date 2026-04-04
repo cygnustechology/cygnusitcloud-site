@@ -8,6 +8,8 @@ import {
   Layers,
   ShieldCheck,
   ArrowRight,
+  Building2,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -56,7 +58,55 @@ const AboutSection = () => (
         </p>
       </div>
 
-      {/* Intro Card */}
+      {/* Public Cloud vs Private Cloud */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="max-w-5xl mx-auto mb-16"
+      >
+        <h3 className="text-2xl font-heading text-foreground text-center mb-3 font-sans">
+          Public Cloud vs Private Cloud
+        </h3>
+        <p className="text-muted-foreground leading-relaxed text-center max-w-3xl mx-auto mb-8">
+          When evaluating cloud deployment models, businesses often compare public cloud hosting with private cloud hosting. While both deliver computing resources over the internet, the ownership, control, and compliance posture differ significantly.
+        </p>
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* Public Cloud */}
+          <div className="bg-card border border-border rounded-lg p-6">
+            <div className="w-12 h-12 rounded-lg bg-cygnus-light flex items-center justify-center mb-4">
+              <Building2 className="w-6 h-6 text-cygnus-red" />
+            </div>
+            <h4 className="text-lg font-heading text-foreground mb-2 font-sans">
+              Public Cloud Hosting
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed text-justify-all mb-4">
+              Public cloud hosting involves multiple organizations sharing the same infrastructure. Each tenant operates within an isolated environment, but the underlying hardware and resources are pooled. This model is cost‑effective and scalable, yet data sovereignty and compliance controls are limited because resources are shared across different entities.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed italic border-l-2 border-cygnus-red/30 pl-3">
+              <strong className="text-foreground not-italic">Analogy:</strong> Public cloud is like renting an apartment in a large building. You have your own unit, but the facilities and structure are shared with other tenants.
+            </p>
+          </div>
+          {/* Private Cloud */}
+          <div className="bg-card border border-border rounded-lg p-6">
+            <div className="w-12 h-12 rounded-lg bg-cygnus-light flex items-center justify-center mb-4">
+              <Home className="w-6 h-6 text-cygnus-red" />
+            </div>
+            <h4 className="text-lg font-heading text-foreground mb-2 font-sans">
+              Private Cloud Hosting
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed text-justify-all mb-4">
+              Private cloud hosting is a single‑tenant model where one organization has exclusive use of its cloud environment. Resources are not shared, giving the organization greater control, customization, and compliance assurance. While it comes at a higher cost, it provides the governance and sovereignty required for sensitive workloads.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed italic border-l-2 border-cygnus-red/30 pl-3">
+              <strong className="text-foreground not-italic">Analogy:</strong> Private cloud is like renting an entire house. You have full control over the property, its layout, and its security, without sharing with neighbors.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Intro Card - Why Choose CygnusCloud */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -114,7 +164,7 @@ const AboutSection = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto mb-16"
+        className="max-w-4xl mx-auto"
       >
         <div className="bg-cygnus-light border border-border rounded-lg p-8 md:p-10">
           <div className="flex items-start gap-5">
@@ -161,21 +211,6 @@ const AboutSection = () => (
               </Button>
             </div>
           </div>
-        </div>
-      </motion.div>
-
-      {/* Company Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="max-w-4xl mx-auto"
-      >
-        <div className="bg-card border border-border rounded-lg p-8 text-center">
-          <p className="text-muted-foreground leading-relaxed max-w-2xl mx-auto text-justify-all">
-            {"\n"}
-          </p>
         </div>
       </motion.div>
     </div>
