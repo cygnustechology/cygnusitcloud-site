@@ -35,8 +35,10 @@ const HeroSection = () => (
           <span className="text-cygnus-red">Private Cloud</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto mb-4 text-justify-all">
-          Malaysia's Award-Winning Private Cloud Hosting for Computing and Accounting Software - Purpose-built for Malaysian Enterprises.
+        <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto mb-4 text-justify-all text-center">
+          Malaysia's Award-Winning Private Cloud Hosting for Secure Computing and Accounting Software-hosting.
+          <br />
+          Purpose-built for Malaysian Enterprises
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-10">

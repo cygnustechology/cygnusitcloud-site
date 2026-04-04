@@ -6,7 +6,7 @@ const solutions = [
     icon: Monitor,
     title: "Application Hosting",
     description:
-      "Host .exe accounting and HR applications - SQL Accounting, MYOB, Autocount, UBS, Million - without local servers. 7-day snapshot backups included.",
+      "Host Legacy Accounting (Autocount, SQL, MYOB, UBS, Million) and HR applications (HR2000, TIMES HRIS) - without client-side installations & local servers. 7-day snapshot backups included.",
   },
   {
     icon: Globe,
@@ -18,7 +18,7 @@ const solutions = [
     icon: Phone,
     title: "IP-Telephony",
     description:
-      "Enterprise IP telephony solutions hosted on sovereign infrastructure for secure, compliant business communications.",
+      "Enterprise IP -Telephony solution on sovereign infrastructure for a cost-efficient, secure & compliant business communications.",
   },
   {
     icon: Database,
@@ -58,7 +58,7 @@ const SolutionsSection = () => (
           Award-Winning Cloud Services
         </h2>
         <p className="text-muted-foreground text-center">
-          Purpose-built sovereign cloud solutions designed for Malaysian enterprises requiring PDPA compliance and data sovereignty.
+          Purpose-built sovereign cloud solutions designed for Malaysian enterprises requiring PDPA compliance and data sovereignty
         </p>
       </div>
 
@@ -76,7 +76,7 @@ const SolutionsSection = () => (
             <div className="w-12 h-12 rounded-lg bg-cygnus-light flex items-center justify-center mb-4 group-hover:bg-cygnus-red/10 transition-colors">
               <s.icon className="w-6 h-6 text-cygnus-red" />
             </div>
-            <h3 className="text-lg font-heading text-foreground mb-2">{s.title}</h3>
+            <h3 className="text-lg font-heading text-foreground mb-2 font-sans">{s.title}</h3>
             <p className="text-sm text-muted-foreground leading-relaxed text-justify-all">{s.description}</p>
           </motion.div>
         ))}

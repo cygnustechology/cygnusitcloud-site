@@ -37,7 +37,7 @@ const FeaturesSection = () => (
           Technical Strengths
         </h2>
         <p className="text-muted-foreground text-center">
-          Infrastructure built for performance, governance, and regulatory assurance.
+          Infrastructure built for performance, governance, and regulatory assurance
         </p>
       </div>
 
