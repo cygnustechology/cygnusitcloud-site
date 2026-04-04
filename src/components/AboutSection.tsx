@@ -74,14 +74,14 @@ const AboutSection = () => (
         </p>
         <div className="grid md:grid-cols-2 gap-6">
           {/* Public Cloud */}
-          <div className="bg-card border border-border rounded-lg p-6">
+          <div className="bg-card border border-border rounded-lg p-6 flex flex-col">
             <div className="w-12 h-12 rounded-lg bg-cygnus-light flex items-center justify-center mb-4">
               <Building2 className="w-6 h-6 text-cygnus-red" />
             </div>
             <h4 className="text-lg font-heading text-foreground mb-2 font-sans">
               Public Cloud Hosting
             </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed text-justify-all mb-4">
+            <p className="text-sm text-muted-foreground leading-relaxed text-justify-all mb-4 flex-grow">
               Public cloud hosting involves multiple organizations sharing the same infrastructure. Each tenant operates within an isolated environment, but the underlying hardware and resources are pooled. This model is cost‑effective and scalable, yet data sovereignty and compliance controls are limited because resources are shared across different entities.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed italic border-l-2 border-cygnus-red/30 pl-3">
@@ -89,14 +89,14 @@ const AboutSection = () => (
             </p>
           </div>
           {/* Private Cloud */}
-          <div className="bg-card border border-border rounded-lg p-6">
+          <div className="bg-card border border-border rounded-lg p-6 flex flex-col">
             <div className="w-12 h-12 rounded-lg bg-cygnus-light flex items-center justify-center mb-4">
               <Home className="w-6 h-6 text-cygnus-red" />
             </div>
             <h4 className="text-lg font-heading text-foreground mb-2 font-sans">
               Private Cloud Hosting
             </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed text-justify-all mb-4">
+            <p className="text-sm text-muted-foreground leading-relaxed text-justify-all mb-4 flex-grow">
               Private cloud hosting is a single‑tenant model where one organization has exclusive use of its cloud environment. Resources are not shared, giving the organization greater control, customization, and compliance assurance. While it comes at a higher cost, it provides the governance and sovereignty required for sensitive workloads.
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed italic border-l-2 border-cygnus-red/30 pl-3">
