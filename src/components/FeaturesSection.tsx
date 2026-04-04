@@ -6,13 +6,13 @@ const features = [
     icon: Zap,
     title: "Enterprise-Grade SSD - Up to 1M IOPS",
     description:
-      "Our storage infrastructure delivers up to 1 million IOPS - far exceeding typical VM providers. Ideal for demanding database workloads and transactional applications.",
+      "Our storage infrastructure delivers up to 1 million Input-Output per Second (IOPS) - far exceeding typical VM providers. Ideal for demanding database workloads and transactional applications.",
   },
   {
     icon: AppWindow,
     title: "Host .exe Applications in the Cloud",
     description:
-      "Specifically engineered to run on-premise Windows applications (accounting, HR, ERP) without local servers. Seamless remote access with enterprise reliability.",
+      "Specifically engineered to run on-premise Windows applications (Accounting, HR, ERP) without local servers or application-client installation. Seamless remote access with enterprise reliability.",
   },
   {
     icon: Camera,
