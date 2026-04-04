@@ -43,7 +43,10 @@ const highlights = [
   },
 ];
 
-const AboutSection = () => (
+const AboutSection = () => {
+  const [showPyramid, setShowPyramid] = useState(false);
+
+  return (
   <section id="about" className="py-20 md:py-28 bg-background">
     <div className="container mx-auto px-4">
       {/* Section Header */}
