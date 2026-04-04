@@ -71,13 +71,13 @@ const AboutSection = () => (
             </div>
             <div>
               <h3 className="text-xl font-heading text-foreground mb-3 font-sans">
-                Why Choose CygnusITCloud?
+                Why Choose CygnusCloud®
               </h3>
               <p className="text-muted-foreground leading-relaxed text-justify-all mb-4">
-                Unlike typical cloud providers who simply sell server space, <strong className="text-foreground">Cygnus Technology Solutions</strong> takes a holistic approach. We evaluate your environment, understand your needs, and architect a complete infrastructure — integrating our various solutions together to form a true <strong className="text-cygnus-red">#SolutionThatWorks</strong>.
+                Unlike typical cloud providers who simply sell server space, <strong className="text-foreground">Cygnus Technology Solutions Sdn. Bhd.</strong> takes a holistic approach. We evaluate your environment, understand your needs, and architect a complete infrastructure - integrating our various solutions together to form a true <strong className="text-cygnus-red">#SolutionThatWorks</strong>.
               </p>
               <p className="text-muted-foreground leading-relaxed text-justify-all">
-                From private cloud hosting and IP-telephony to cybersecurity and compliance — we provide comprehensive IT solutions under one roof, making us uniquely positioned as both your cloud provider and IT strategic partner.
+                From Private Cloud hosting and IP-Telephony to Cybersecurity and Compliance - we provide comprehensive IT solutions under one roof, making us uniquely positioned as both your cloud provider and IT strategic partner.
               </p>
             </div>
           </div>
