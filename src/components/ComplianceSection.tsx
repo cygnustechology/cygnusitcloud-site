@@ -9,8 +9,8 @@ const pillars = [
   },
   {
     icon: Shield,
-    title: "ESG",
-    text: "Aligned with the latest 2024 amendments including mandatory breach notification, enhanced penalties, and strengthened data subject rights.",
+    title: "ESG Alignment",
+    text: "Aligned with Environmental, Social, and Governance (ESG) standards: Reducing office power usage by eliminating on‑premise servers; Enabling secure remote work to cut travel emissions and improve well‑being, and embedding Compliance‑driven Governance into every deployment.",
   },
   {
     icon: UserCheck,
