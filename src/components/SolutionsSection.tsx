@@ -34,9 +34,9 @@ const solutions = [
   },
   {
     icon: HardDrive,
-    title: "Backup & Disaster Recovery",
+    title: "Backup & Disaster Recovery (DR)",
     description:
-      "Automated backup and DR solutions ensuring business continuity with geographically local data replication.",
+      "Automated backup and DR solutions ensuring business continuity & resilience with a peace of mind.",
   },
 ];
 
