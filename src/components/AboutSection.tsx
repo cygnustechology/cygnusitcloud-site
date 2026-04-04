@@ -176,7 +176,7 @@ const AboutSection = () => (
               </h3>
               <p className="text-muted-foreground leading-relaxed text-justify-all mb-4 whitespace-pre-line">
                 While most IT / Cloud providers focus solely on selling cloud resources - Cygnus is different. 
-                {"\n"}We deliver an Integrated Ecosystem of Solutions - From Private Cloud Hosting and Unified Communications to Endpoint Protection, Compliance Assurance, and Secure Connectivity — all built on a foundation of properly designed and set-up infrastructure.
+                {"\n"}We deliver an Integrated Ecosystem of Solutions - From Private Cloud Hosting and Unified Communications to Endpoint Protection, Compliance Assurance, and Secure Connectivity - all built on a foundation of properly designed and set-up infrastructure.
               </p>
               <div className="flex flex-wrap gap-3 mb-4">
                 {[
