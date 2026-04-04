@@ -9,10 +9,22 @@ const solutions = [
       "Host Legacy Accounting (Autocount, SQL, MYOB, UBS, Million) and HR applications (HR2000, TIMES HRIS) - without client-side installations & local servers. 7-day snapshot backups included.",
   },
   {
+    icon: Database,
+    title: "Database Hosting",
+    description:
+      "Sovereign database hosting for systems containing Malaysian citizens' personal data - fully PDPA compliant.",
+  },
+  {
     icon: Globe,
     title: "Website Hosting (cPanel)",
     description:
       "Reliable cPanel-based web hosting fully hosted within Malaysia, ensuring data sovereignty and fast local access.",
+  },
+  {
+    icon: HardDrive,
+    title: "Backup & Disaster Recovery (DR)",
+    description:
+      "Automated backup and DR solutions ensuring business continuity & resilience with a peace of mind.",
   },
   {
     icon: Phone,
@@ -21,22 +33,10 @@ const solutions = [
       "Enterprise IP -Telephony solution on sovereign infrastructure for a cost-efficient, secure & compliant business communications.",
   },
   {
-    icon: Database,
-    title: "Database Hosting",
-    description:
-      "Sovereign database hosting for systems containing Malaysian citizens' personal data - fully PDPA compliant.",
-  },
-  {
     icon: LayoutDashboard,
     title: "Virtual Desktop (VDI)",
     description:
       "Secure Virtual Desktop Interface enabling remote workforce access with enterprise-grade encryption and compliance.",
-  },
-  {
-    icon: HardDrive,
-    title: "Backup & Disaster Recovery (DR)",
-    description:
-      "Automated backup and DR solutions ensuring business continuity & resilience with a peace of mind.",
   },
 ];
 
