@@ -16,13 +16,13 @@ const highlights = [
     icon: Monitor,
     title: "Run Legacy Apps Without Installation",
     description:
-      "Host your .exe accounting and HR applications — Autocount, SQL, MYOB, UBS, Million, HR2000, TIMES HRIS — directly in the cloud. No local installation needed. If you lose your laptop, simply log in from any device and you're back to work instantly.",
+      "Host your legacy (.exe) applications directly on the cloud. No local installation needed. If you lose your laptop, simply log in from any device and you're back to work instantly.",
   },
   {
     icon: Globe2,
     title: "Access From Anywhere",
     description:
-      "Your applications are available from any device, anywhere with an internet connection. Whether you're working from home, a café, or overseas — your entire office environment is just a login away.",
+      "Your applications are available from any device, anywhere with an internet connection. Whether you're working from home, a café, or overseas - your entire office environment is just a login away.",
   },
   {
     icon: Leaf,
@@ -34,7 +34,7 @@ const highlights = [
     icon: HeadphonesIcon,
     title: "Real Human Support",
     description:
-      "Our support team is reachable via phone and email — staffed by real people who understand your business. We stand by to assist with monitoring, maintenance, and troubleshooting so you're never left on your own.",
+      "Our support team is reachable via phone and email - staffed by real people who understands proper IT-setup, and your business operations. We stand by to assist with monitoring, maintenance, and troubleshooting so you're never left on your own.",
   },
 ];
 
