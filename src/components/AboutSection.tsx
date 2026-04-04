@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Cloud,
@@ -10,8 +11,10 @@ import {
   ArrowRight,
   Building2,
   Home,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import solutionsPyramid from "@/assets/solutions-pyramid.webp";
 
 const highlights = [
   {
