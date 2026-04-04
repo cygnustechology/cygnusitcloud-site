@@ -66,8 +66,8 @@ const ContactSection = () => {
                 <Mail className="w-5 h-5 text-cygnus-red mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Email</p>
-                  <a href="mailto:info@cygnusitcloud.com" className="text-sm text-muted-foreground hover:text-cygnus-red transition-colors">
-                    info@cygnusitcloud.com
+                  <a href="mailto:cts-info@cygnusitcloud.com" className="text-sm text-muted-foreground hover:text-cygnus-red transition-colors">
+                    cts-info@cygnusitcloud.com
                   </a>
                 </div>
               </div>
