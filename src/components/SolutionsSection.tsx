@@ -36,7 +36,7 @@ const solutions = [
     icon: LayoutDashboard,
     title: "Virtual Desktop (VDI)",
     description:
-      "Secure Virtual Desktop Interface enabling remote workforce access with enterprise-grade encryption and compliance.",
+      "Secure Virtual Desktop Interface enabling remote workforce access with enterprise-grade setup, encryption and compliance.",
   },
 ];
 
