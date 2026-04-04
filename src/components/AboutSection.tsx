@@ -50,7 +50,7 @@ const AboutSection = () => (
           What is Private Cloud Hosting?
         </h2>
         <p className="text-muted-foreground leading-relaxed text-center">
-          Private cloud hosting is a compliance-ready, single-tenant cloud platform that provides a secure and flexible hosting environment — purpose-built for Malaysian enterprises that need to keep data sovereign and meet PDPA requirements.
+          Private cloud hosting is a compliance-ready, single-tenant cloud platform that provides a secure and flexible hosting environment - Purpose-built for Malaysian enterprises that need to keep data sovereign and meet PDPA requirements.
         </p>
       </div>
 
