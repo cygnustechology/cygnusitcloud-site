@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ["Nunito Sans", "Arial", "Helvetica", "sans-serif"],
+        heading: ["Frutiger", "Arial", "Helvetica", "sans-serif"],
         body: ["Arial", "Helvetica", "sans-serif"],
       },
       colors: {
