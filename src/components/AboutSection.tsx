@@ -49,8 +49,10 @@ const AboutSection = () => (
         <h2 className="text-3xl md:text-4xl font-heading text-foreground mt-3 mb-4">
           What is Private Cloud Hosting?
         </h2>
-        <p className="text-muted-foreground leading-relaxed text-center">
-          Private cloud hosting is a compliance-ready, single-tenant cloud platform that provides a secure and flexible hosting environment - Purpose-built for Malaysian enterprises that need to keep data sovereign and meet PDPA requirements.
+        <p className="text-muted-foreground leading-relaxed text-center whitespace-pre-line">
+          CygnusCloud® is a single‑tenant, enterprise‑grade cloud solution purpose‑built for Malaysian businesses that demand data sovereignty, PDPA compliance, and DPO assurance. 
+          {"\n"}Unlike conventional hosting providers, we are not a Virtual Private Server (VPS) provider and we do not offer generic Dedicated Servers.
+          {"\n"}Instead, we deliver true Virtual Machines (VMs) engineered for enterprises that must safeguard sensitive information while meeting strict regulatory requirements.
         </p>
       </div>
 
