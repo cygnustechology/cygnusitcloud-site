@@ -30,13 +30,13 @@ const solutions = [
     icon: Phone,
     title: "IP-Telephony",
     description:
-      "Enterprise IP -Telephony solution on sovereign infrastructure for a cost-efficient, secure & compliant business communications.",
+      "Enterprise IP -Telephony solution on sovereign infrastructure for a cost-efficient, secure & efficient business communications among various branches & in different countries.",
   },
   {
     icon: LayoutDashboard,
     title: "Virtual Desktop (VDI)",
     description:
-      "Secure Virtual Desktop Interface enabling remote workforce access with enterprise-grade encryption and compliance.",
+      "Secure Virtual Desktop Interface enabling remote workforce access with enterprise-grade setup, encryption and compliance.",
   },
 ];
 
