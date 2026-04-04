@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ["Frutiger Bold", "Trebuchet MS", "Arial", "sans-serif"],
+        heading: ["Nunito Sans", "Arial", "Helvetica", "sans-serif"],
         body: ["Arial", "Helvetica", "sans-serif"],
       },
       colors: {
