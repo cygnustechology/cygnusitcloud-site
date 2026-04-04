@@ -1,15 +1,12 @@
-import { Shield } from "lucide-react";
+import logo from "@/assets/CTS_Logo.png";
 
 const Footer = () => (
-  <footer className="gradient-navy py-10 border-t border-primary/20">
+  <footer className="gradient-dark py-10 border-t border-primary-foreground/10">
     <div className="container mx-auto px-4">
       <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-teal" />
-          <span className="text-sm font-semibold text-primary-foreground">CygnusITCloud</span>
-        </div>
+        <img src={logo} alt="Cygnus Technology Solutions" className="h-8 w-auto brightness-0 invert" />
         <p className="text-xs text-primary-foreground/50 text-center">
-          © {new Date().getFullYear()} Cygnus Technology Solutions Sdn. Bhd. All rights reserved. Malaysia's Sovereign Private Cloud.
+          &copy; {new Date().getFullYear()} Cygnus Technology Solutions Sdn. Bhd. All rights reserved. Malaysia's Sovereign Private Cloud.
         </p>
       </div>
     </div>

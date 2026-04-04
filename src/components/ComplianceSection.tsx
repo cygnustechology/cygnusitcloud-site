@@ -15,24 +15,24 @@ const pillars = [
   {
     icon: UserCheck,
     title: "DPO Assurance",
-    text: "Data Protection Officer governance embedded into our operations — providing oversight, audit readiness, and regulatory liaison for your organisation.",
+    text: "Data Protection Officer governance embedded into our operations - providing oversight, audit readiness, and regulatory liaison for your organisation.",
   },
   {
     icon: MapPin,
     title: "Data Sovereignty",
-    text: "All data is processed and stored exclusively within Malaysian borders. No cross-border data transfers — your data stays in Malaysia.",
+    text: "All data is processed and stored exclusively within Malaysian borders. No cross-border data transfers - your data stays in Malaysia.",
   },
 ];
 
 const ComplianceSection = () => (
-  <section id="compliance" className="py-20 md:py-28 gradient-navy">
+  <section id="compliance" className="py-20 md:py-28 gradient-dark">
     <div className="container mx-auto px-4">
       <div className="text-center max-w-2xl mx-auto mb-16">
-        <span className="text-sm font-semibold text-gold uppercase tracking-wider">Compliance</span>
-        <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mt-3 mb-4">
+        <span className="text-sm font-semibold text-cygnus-red uppercase tracking-wider">Compliance</span>
+        <h2 className="text-3xl md:text-4xl font-heading text-primary-foreground mt-3 mb-4">
           Governance & Regulatory Assurance
         </h2>
-        <p className="text-primary-foreground/60">
+        <p className="text-primary-foreground/60 text-justify-all">
           CygnusITCloud is purpose-built for organisations that require auditable, regulation-compliant cloud infrastructure.
         </p>
       </div>
@@ -45,13 +45,13 @@ const ComplianceSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.12, duration: 0.5 }}
-            className="bg-primary/40 border border-primary-foreground/10 rounded-lg p-6 backdrop-blur-sm"
+            className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-lg p-6"
           >
-            <div className="w-10 h-10 rounded-full bg-teal/20 flex items-center justify-center mb-4">
-              <p.icon className="w-5 h-5 text-teal" />
+            <div className="w-10 h-10 rounded-full bg-cygnus-red/20 flex items-center justify-center mb-4">
+              <p.icon className="w-5 h-5 text-cygnus-red" />
             </div>
-            <h3 className="text-lg font-semibold text-primary-foreground mb-2 font-heading">{p.title}</h3>
-            <p className="text-sm text-primary-foreground/60 leading-relaxed">{p.text}</p>
+            <h3 className="text-lg font-heading text-primary-foreground mb-2">{p.title}</h3>
+            <p className="text-sm text-primary-foreground/60 leading-relaxed text-justify-all">{p.text}</p>
           </motion.div>
         ))}
       </div>
