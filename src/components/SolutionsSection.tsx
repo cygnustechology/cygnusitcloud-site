@@ -6,7 +6,7 @@ const solutions = [
     icon: Monitor,
     title: "Application Hosting",
     description:
-      "Host .exe accounting & HR applications — SQL Accounting, MYOB, Autocount, UBS, Million — without local servers. 7-day snapshot backups included.",
+      "Host .exe accounting and HR applications - SQL Accounting, MYOB, Autocount, UBS, Million - without local servers. 7-day snapshot backups included.",
   },
   {
     icon: Globe,
@@ -24,7 +24,7 @@ const solutions = [
     icon: Database,
     title: "Database Hosting",
     description:
-      "Sovereign database hosting for systems containing Malaysian citizens' personal data — fully PDPA compliant.",
+      "Sovereign database hosting for systems containing Malaysian citizens' personal data - fully PDPA compliant.",
   },
   {
     icon: LayoutDashboard,
@@ -53,11 +53,11 @@ const SolutionsSection = () => (
   <section id="solutions" className="py-20 md:py-28 bg-background">
     <div className="container mx-auto px-4">
       <div className="text-center max-w-2xl mx-auto mb-16">
-        <span className="text-sm font-semibold text-teal uppercase tracking-wider">Solutions</span>
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">
+        <span className="text-sm font-semibold text-cygnus-red uppercase tracking-wider">Solutions</span>
+        <h2 className="text-3xl md:text-4xl font-heading text-foreground mt-3 mb-4">
           Award-Winning Cloud Services
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-justify-all">
           Purpose-built sovereign cloud solutions designed for Malaysian enterprises requiring PDPA compliance and data sovereignty.
         </p>
       </div>
@@ -71,13 +71,13 @@ const SolutionsSection = () => (
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-50px" }}
-            className="group bg-card border border-border rounded-lg p-6 hover:shadow-lg hover:border-teal/40 transition-all duration-300"
+            className="group bg-card border border-border rounded-lg p-6 hover:shadow-lg hover:border-cygnus-red/30 transition-all duration-300"
           >
-            <div className="w-12 h-12 rounded-lg bg-teal-light flex items-center justify-center mb-4 group-hover:bg-teal/10 transition-colors">
-              <s.icon className="w-6 h-6 text-teal" />
+            <div className="w-12 h-12 rounded-lg bg-cygnus-light flex items-center justify-center mb-4 group-hover:bg-cygnus-red/10 transition-colors">
+              <s.icon className="w-6 h-6 text-cygnus-red" />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2 font-heading">{s.title}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">{s.description}</p>
+            <h3 className="text-lg font-heading text-foreground mb-2">{s.title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed text-justify-all">{s.description}</p>
           </motion.div>
         ))}
       </div>

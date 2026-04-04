@@ -4,9 +4,9 @@ import { Zap, AppWindow, Camera, ShieldCheck } from "lucide-react";
 const features = [
   {
     icon: Zap,
-    title: "Enterprise-Grade SSD — Up to 1M IOPS",
+    title: "Enterprise-Grade SSD - Up to 1M IOPS",
     description:
-      "Our storage infrastructure delivers up to 1 million IOPS — far exceeding typical VM providers. Ideal for demanding database workloads and transactional applications.",
+      "Our storage infrastructure delivers up to 1 million IOPS - far exceeding typical VM providers. Ideal for demanding database workloads and transactional applications.",
   },
   {
     icon: AppWindow,
@@ -29,14 +29,14 @@ const features = [
 ];
 
 const FeaturesSection = () => (
-  <section id="features" className="py-20 md:py-28 bg-muted/50">
+  <section id="features" className="py-20 md:py-28 bg-cygnus-light">
     <div className="container mx-auto px-4">
       <div className="text-center max-w-2xl mx-auto mb-16">
-        <span className="text-sm font-semibold text-teal uppercase tracking-wider">Features</span>
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">
+        <span className="text-sm font-semibold text-cygnus-red uppercase tracking-wider">Features</span>
+        <h2 className="text-3xl md:text-4xl font-heading text-foreground mt-3 mb-4">
           Technical Strengths
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-justify-all">
           Infrastructure built for performance, governance, and regulatory assurance.
         </p>
       </div>
@@ -51,12 +51,12 @@ const FeaturesSection = () => (
             transition={{ duration: 0.5, delay: i * 0.1 }}
             className="flex gap-4"
           >
-            <div className="shrink-0 w-12 h-12 rounded-lg gradient-teal flex items-center justify-center">
+            <div className="shrink-0 w-12 h-12 rounded-lg bg-cygnus-red flex items-center justify-center">
               <f.icon className="w-6 h-6 text-accent-foreground" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-foreground mb-2 font-heading">{f.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+              <h3 className="text-lg font-heading text-foreground mb-2">{f.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed text-justify-all">{f.description}</p>
             </div>
           </motion.div>
         ))}

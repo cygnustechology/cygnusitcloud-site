@@ -39,50 +39,49 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-20 md:py-28 bg-muted/50">
+    <section id="contact" className="py-20 md:py-28 bg-cygnus-light">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-sm font-semibold text-teal uppercase tracking-wider">Contact</span>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-3 mb-4">
+          <span className="text-sm font-semibold text-cygnus-red uppercase tracking-wider">Contact</span>
+          <h2 className="text-3xl md:text-4xl font-heading text-foreground mt-3 mb-4">
             Get in Touch
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-justify-all">
             Speak with our compliance and solutions team about your sovereign cloud requirements.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <h3 className="text-xl font-semibold text-foreground mb-6 font-heading">
+            <h3 className="text-xl font-heading text-foreground mb-6">
               Cygnus Technology Solutions Sdn. Bhd.
             </h3>
             <div className="space-y-5">
               <div className="flex gap-3">
-                <Mail className="w-5 h-5 text-teal mt-0.5 shrink-0" />
+                <Mail className="w-5 h-5 text-cygnus-red mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Email</p>
-                  <a href="mailto:info@cygnusitcloud.com" className="text-sm text-muted-foreground hover:text-teal transition-colors">
+                  <a href="mailto:info@cygnusitcloud.com" className="text-sm text-muted-foreground hover:text-cygnus-red transition-colors">
                     info@cygnusitcloud.com
                   </a>
                 </div>
               </div>
               <div className="flex gap-3">
-                <Phone className="w-5 h-5 text-teal mt-0.5 shrink-0" />
+                <Phone className="w-5 h-5 text-cygnus-red mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Phone</p>
-                  <a href="tel:+60312345678" className="text-sm text-muted-foreground hover:text-teal transition-colors">
+                  <a href="tel:+60312345678" className="text-sm text-muted-foreground hover:text-cygnus-red transition-colors">
                     +603-1234 5678
                   </a>
                 </div>
               </div>
               <div className="flex gap-3">
-                <MapPin className="w-5 h-5 text-teal mt-0.5 shrink-0" />
+                <MapPin className="w-5 h-5 text-cygnus-red mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">Office</p>
                   <p className="text-sm text-muted-foreground">
@@ -93,7 +92,6 @@ const ContactSection = () => {
             </div>
           </motion.div>
 
-          {/* Form */}
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, x: 20 }}
@@ -138,7 +136,7 @@ const ContactSection = () => {
             </div>
             <Button
               type="submit"
-              className="w-full bg-teal hover:bg-teal/90 text-accent-foreground font-semibold"
+              className="w-full bg-cygnus-red hover:bg-cygnus-red/90 text-accent-foreground font-semibold uppercase tracking-wide"
             >
               <Send className="w-4 h-4 mr-2" />
               Submit Inquiry
