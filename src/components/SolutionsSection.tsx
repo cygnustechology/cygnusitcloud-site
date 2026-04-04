@@ -57,7 +57,7 @@ const SolutionsSection = () => (
         <h2 className="text-3xl md:text-4xl font-heading text-foreground mt-3 mb-4">
           Award-Winning Cloud Services
         </h2>
-        <p className="text-muted-foreground text-justify-all">
+        <p className="text-muted-foreground text-center">
           Purpose-built sovereign cloud solutions designed for Malaysian enterprises requiring PDPA compliance and data sovereignty.
         </p>
       </div>
