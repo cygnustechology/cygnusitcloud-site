@@ -66,9 +66,8 @@ const HeroSection = () => (
           </Button>
           <Button
             asChild
-            variant="outline"
             size="lg"
-            className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-base px-8 uppercase tracking-wide"
+            className="bg-primary-foreground text-foreground hover:bg-primary-foreground/90 font-semibold text-base px-8 uppercase tracking-wide"
           >
             <a href="#compliance">View Compliance</a>
           </Button>
