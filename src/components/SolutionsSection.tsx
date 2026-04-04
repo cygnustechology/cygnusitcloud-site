@@ -30,7 +30,7 @@ const solutions = [
     icon: Phone,
     title: "IP-Telephony",
     description:
-      "Enterprise IP -Telephony solution on sovereign infrastructure for a cost-efficient, secure & compliant business communications.",
+      "Enterprise IP -Telephony solution on sovereign infrastructure for a cost-efficient, secure & efficient business communications among various branches & in different countries.",
   },
   {
     icon: LayoutDashboard,
