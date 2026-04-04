@@ -1,13 +1,20 @@
 import { motion } from "framer-motion";
 import { Shield, Award, Server } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import heroBg from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => (
-  <section id="home" className="relative gradient-dark pt-28 pb-20 md:pt-40 md:pb-32 overflow-hidden">
-    <div className="absolute inset-0 opacity-5" style={{
-      backgroundImage: "linear-gradient(hsl(0 0% 50% / 0.2) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 50% / 0.2) 1px, transparent 1px)",
-      backgroundSize: "60px 60px"
-    }} />
+  <section
+    id="home"
+    className="relative pt-28 pb-20 md:pt-40 md:pb-32 overflow-hidden"
+  >
+    {/* Background image */}
+    <div
+      className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${heroBg})` }}
+    />
+    {/* Dark overlay */}
+    <div className="absolute inset-0 bg-foreground/75" />
 
     <div className="container mx-auto px-4 relative z-10">
       <motion.div
@@ -28,9 +35,8 @@ const HeroSection = () => (
           <span className="text-cygnus-red">Private Cloud</span>
         </h1>
 
-        <p className="text-lg md:text-xl text-primary-foreground/70 max-w-2xl mx-auto mb-4 text-justify-all">
-          PDPA 2010 and 2024 Amendment compliant cloud infrastructure with Data Protection
-          Officer (DPO) assurance - purpose-built for Malaysian enterprises.
+        <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto mb-4 text-justify-all">
+          Malaysia's Award-Winning Private Cloud Hosting for Computing and Accounting Software - Purpose-built for Malaysian Enterprises.
         </p>
 
         <div className="flex flex-wrap justify-center gap-4 mb-10">
