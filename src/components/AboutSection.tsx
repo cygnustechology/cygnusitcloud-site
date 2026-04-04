@@ -174,14 +174,7 @@ const AboutSection = () => (
       >
         <div className="bg-card border border-border rounded-lg p-8 text-center">
           <p className="text-muted-foreground leading-relaxed max-w-2xl mx-auto text-justify-all">
-            CygnusITCloud.com is owned and managed by{" "}
-            <strong className="text-foreground">
-              Cygnus Technology Solutions Sdn. Bhd.
-            </strong>
-            , a Malaysian enterprise dedicated to providing award-winning private
-            cloud services. We specialise in hosting business-critical
-            applications, databases, and infrastructure — all within Malaysia —
-            ensuring full compliance with PDPA 2010 and the 2024 Amendment Act.
+            {"\n"}
           </p>
         </div>
       </motion.div>
