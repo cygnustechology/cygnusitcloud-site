@@ -20,7 +20,7 @@ const LoginPage = () => {
     try {
       const session = await login(email, password);
       if (session) { navigate("/dashboard"); } else { setError("Invalid email or password"); }
-    } catch { setError("Connection error. Is the API server running?"); }
+    } catch (err: any) { setError(err?.message || "Connection error. Is the API server running?"); }
     setLoading(false);
   };
 

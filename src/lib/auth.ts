@@ -38,7 +38,7 @@ export async function login(email: string, password: string): Promise<AuthSessio
     localStorage.setItem(SESSION_KEY, JSON.stringify(data.session));
     return data.session;
   } catch {
-    return null;
+    throw new Error("Could not reach API server. Check that it's running and accessible via HTTPS.");
   }
 }
 
