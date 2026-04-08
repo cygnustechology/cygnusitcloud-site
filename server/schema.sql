@@ -1,11 +1,37 @@
--- Cygnus Cloud Database Schema
--- Run this as the postgres superuser or cygnus_user
+-- Cygnus Main Database Schema
+-- Database: Cygnus_mainDB
+-- This is the centralized identity & platform database.
+-- All Cygnus projects (Vote Polling, Visitor Management, etc.) share this DB
+-- so users register ONCE and are recognized across all systems.
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Users table (admin + tenants)
+------------------------------------------------------------
+-- CENTRALIZED IDENTITY: persons table
+-- Single registration across ALL Cygnus projects.
+------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS persons (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  full_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE,
+  phone VARCHAR(50),
+  ic_passport VARCHAR(50),
+  company VARCHAR(255),
+  department VARCHAR(255),
+  designation VARCHAR(255),
+  photo_url TEXT,
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+------------------------------------------------------------
+-- PLATFORM USERS (admin & tenants for Cygnus Cloud)
+-- Links to persons for identity
+------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  person_id UUID REFERENCES persons(id) ON DELETE SET NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   name VARCHAR(255) NOT NULL,
   password_hash TEXT NOT NULL,
@@ -19,7 +45,53 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- VM Connections
+------------------------------------------------------------
+-- PROJECT REGISTRY
+-- Tracks which Lovable projects use this central DB
+------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS projects (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code VARCHAR(50) UNIQUE NOT NULL,         -- e.g. 'vote-polling', 'visitor-mgmt'
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  api_url TEXT,                              -- deployed URL of the project
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+------------------------------------------------------------
+-- PERSON ↔ PROJECT participation
+-- Tracks which person is registered/active in which project
+------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS person_projects (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  person_id UUID REFERENCES persons(id) ON DELETE CASCADE NOT NULL,
+  project_id UUID REFERENCES projects(id) ON DELETE CASCADE NOT NULL,
+  role VARCHAR(50) DEFAULT 'participant',    -- 'participant', 'admin', 'voter', 'visitor', etc.
+  registered_at TIMESTAMPTZ DEFAULT NOW(),
+  metadata JSONB DEFAULT '{}',
+  UNIQUE(person_id, project_id)
+);
+
+------------------------------------------------------------
+-- ACTIVITY LOG
+-- Centralized tracking: who did what, in which project
+------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS activity_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  person_id UUID REFERENCES persons(id) ON DELETE SET NULL,
+  project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
+  action VARCHAR(100) NOT NULL,             -- 'check_in', 'voted', 'registered', etc.
+  details JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_activity_person ON activity_log(person_id);
+CREATE INDEX IF NOT EXISTS idx_activity_project ON activity_log(project_id);
+CREATE INDEX IF NOT EXISTS idx_activity_created ON activity_log(created_at DESC);
+
+------------------------------------------------------------
+-- VM CONNECTIONS (for Cygnus Cloud panel)
+------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS connections (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
@@ -32,7 +104,9 @@ CREATE TABLE IF NOT EXISTS connections (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Apps
+------------------------------------------------------------
+-- APPS (deployed applications)
+------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS apps (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
@@ -51,7 +125,9 @@ CREATE TABLE IF NOT EXISTS apps (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Managed databases
+------------------------------------------------------------
+-- MANAGED DATABASES
+------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS databases (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
@@ -68,7 +144,20 @@ CREATE TABLE IF NOT EXISTS databases (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Seed default admin (password: admin123)
+------------------------------------------------------------
+-- SEED: Default admin user
+------------------------------------------------------------
 INSERT INTO users (email, name, password_hash, role, workspace, max_apps, max_databases, storage_quota_mb)
-VALUES ('admin@cygnus.cloud', 'Admin', '$2a$10$rQZK8sDwZBGHRHmE5Mh2aOLH5p1Kn7YxX8FjVqkN6kZJGvRn0WCWK', 'admin', '__admin__', -1, -1, -1)
+VALUES ('admin@cygnus.cloud', 'Admin', '$2a$10$placeholder', 'admin', '__admin__', -1, -1, -1)
 ON CONFLICT (email) DO NOTHING;
+
+-- NOTE: Run `node seed-admin.js` after schema setup to set the correct bcrypt hash.
+
+------------------------------------------------------------
+-- SEED: Register known Cygnus projects
+------------------------------------------------------------
+INSERT INTO projects (code, name, description) VALUES
+  ('cygnus-cloud', 'Cygnus Cloud Platform', 'Central cloud management panel'),
+  ('vote-polling', 'Vote Polling System', 'AGM voting and polling system'),
+  ('visitor-mgmt', 'Visitor Management System', 'Visitor check-in and tracking')
+ON CONFLICT (code) DO NOTHING;
