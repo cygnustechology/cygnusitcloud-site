@@ -1,5 +1,5 @@
 -- Cygnus Main Database Schema
--- Database: Cygnus_mainDB
+-- Database: cygnus_maindb
 -- This is the centralized identity & platform database.
 -- All Cygnus projects (Vote Polling, Visitor Management, etc.) share this DB
 -- so users register ONCE and are recognized across all systems.
