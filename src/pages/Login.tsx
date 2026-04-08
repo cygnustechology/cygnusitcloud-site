@@ -38,7 +38,7 @@ const LoginPage = () => {
           <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-2.5 rounded-md bg-cygnus-red text-white text-sm font-heading hover:opacity-90 disabled:opacity-50 transition-all">
             {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><LogIn className="w-4 h-4" /> Sign In</>}
           </button>
-          <div className="pt-2 border-t border-border"><p className="text-[10px] text-muted-foreground text-center">Default: admin@cygnus.cloud / admin123</p></div>
+          <div className="pt-2 border-t border-border"><p className="text-[10px] text-muted-foreground text-center">Contact your administrator for access</p></div>
         </form>
       </motion.div>
     </div>
