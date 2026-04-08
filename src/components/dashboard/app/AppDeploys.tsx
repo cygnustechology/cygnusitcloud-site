@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Rocket, Loader2, Copy, Check } from "lucide-react";
-import { AppConfig, VMConnection, agentFetch, syncDeployConfigToAgent } from "@/lib/connections";
+import { AppConfig, VMConnection, agentFetch, saveAppEnvVars } from "@/lib/connections";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import DeployHistory from "../deploy/DeployHistory";
@@ -10,7 +10,7 @@ interface AppDeploysProps { app: AppConfig; conn?: VMConnection; onUpdate: (app:
 const AppDeploys = ({ app, conn, onUpdate }: AppDeploysProps) => {
   const [deploying, setDeploying] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
-  const webhookUrl = conn ? `${conn.agentUrl.replace(/\/$/, '')}/webhook/github` : "";
+  const webhookUrl = conn ? `${conn.agent_url.replace(/\/$/, '')}/webhook/github` : "";
 
   const copy = (text: string, field: string) => { navigator.clipboard.writeText(text); setCopied(field); toast.success("Copied!"); setTimeout(() => setCopied(null), 2000); };
 
@@ -18,15 +18,23 @@ const AppDeploys = ({ app, conn, onUpdate }: AppDeploysProps) => {
     if (!conn) { toast.error("No connection"); return; }
     setDeploying(true); onUpdate({ ...app, status: "deploying" });
     try {
-      const result = await agentFetch<{ success: boolean; steps: string[] }>(conn, "/deploy", { method: "POST", body: JSON.stringify({ name: app.name, repoUrl: app.repoUrl, deployPath: app.deployPath, port: app.port, domain: app.domain, buildCmd: app.buildCmd }) });
-      onUpdate({ ...app, status: "running", lastDeployed: new Date().toISOString() }); toast.success(`Deployed! ${result.steps.join(" → ")}`);
+      const result = await agentFetch<{ success: boolean; steps: string[] }>(conn, "/deploy", { method: "POST", body: JSON.stringify({ name: app.name, repoUrl: app.repo_url, deployPath: app.deploy_path, port: app.port, domain: app.domain, buildCmd: app.build_cmd }) });
+      onUpdate({ ...app, status: "running", last_deployed: new Date().toISOString() }); toast.success(`Deployed! ${result.steps.join(" → ")}`);
     } catch (err: unknown) { onUpdate({ ...app, status: "failed" }); toast.error(err instanceof Error ? err.message : "Deploy failed"); }
     finally { setDeploying(false); }
   };
 
   const toggleAutoDeploy = async () => {
-    const updated = { ...app, autoDeploy: !app.autoDeploy }; onUpdate(updated);
-    if (conn) { try { await syncDeployConfigToAgent(conn, updated); toast.success(`Auto-deploy ${updated.autoDeploy ? "enabled" : "disabled"}`); } catch { toast.error("Failed to sync"); } }
+    const updated = { ...app, auto_deploy: !app.auto_deploy }; onUpdate(updated);
+    if (conn) {
+      try {
+        await agentFetch(conn, `/deploy-configs/${app.id}`, {
+          method: "PUT",
+          body: JSON.stringify({ id: app.id, name: app.name, repoUrl: app.repo_url, deployPath: app.deploy_path, port: app.port, domain: app.domain, buildCmd: app.build_cmd, autoDeploy: updated.auto_deploy ?? true, webhookSecret: app.webhook_secret, envVars: app.env_vars || {} }),
+        });
+        toast.success(`Auto-deploy ${updated.auto_deploy ? "enabled" : "disabled"}`);
+      } catch { toast.error("Failed to sync"); }
+    }
   };
 
   return (
@@ -39,7 +47,7 @@ const AppDeploys = ({ app, conn, onUpdate }: AppDeploysProps) => {
       </div>
       <div className="stat-card flex items-center justify-between">
         <div><p className="text-sm font-medium text-foreground">Auto-Deploy on Push</p><p className="text-xs text-muted-foreground mt-0.5">Automatically deploy when GitHub receives a push</p></div>
-        <Switch checked={app.autoDeploy !== false} onCheckedChange={toggleAutoDeploy} />
+        <Switch checked={app.auto_deploy !== false} onCheckedChange={toggleAutoDeploy} />
       </div>
       {webhookUrl && (
         <div className="stat-card space-y-3">
@@ -48,10 +56,10 @@ const AppDeploys = ({ app, conn, onUpdate }: AppDeploysProps) => {
           <div className="space-y-1.5"><label className="text-[10px] text-muted-foreground uppercase tracking-wider">Payload URL</label>
             <div className="flex items-center gap-2"><code className="flex-1 px-3 py-1.5 rounded-md bg-secondary text-xs font-mono text-foreground truncate">{webhookUrl}</code>
               <button onClick={() => copy(webhookUrl, "url")} className="p-1.5 rounded-md hover:bg-secondary transition-colors shrink-0">{copied === "url" ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}</button></div></div>
-          {app.webhookSecret && (
+          {app.webhook_secret && (
             <div className="space-y-1.5"><label className="text-[10px] text-muted-foreground uppercase tracking-wider">Secret</label>
-              <div className="flex items-center gap-2"><code className="flex-1 px-3 py-1.5 rounded-md bg-secondary text-xs font-mono text-foreground truncate">{app.webhookSecret}</code>
-                <button onClick={() => copy(app.webhookSecret!, "secret")} className="p-1.5 rounded-md hover:bg-secondary transition-colors shrink-0">{copied === "secret" ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}</button></div></div>
+              <div className="flex items-center gap-2"><code className="flex-1 px-3 py-1.5 rounded-md bg-secondary text-xs font-mono text-foreground truncate">{app.webhook_secret}</code>
+                <button onClick={() => copy(app.webhook_secret!, "secret")} className="p-1.5 rounded-md hover:bg-secondary transition-colors shrink-0">{copied === "secret" ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}</button></div></div>
           )}
           <p className="text-[10px] text-muted-foreground">Content type: <code className="text-foreground">application/json</code> • Events: <code className="text-foreground">Just the push event</code></p>
         </div>

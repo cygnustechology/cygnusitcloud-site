@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
-import { AppConfig, VMConnection, getConnections, getApps, saveApps } from "@/lib/connections";
+import { AppConfig, VMConnection, getConnections, getApps, updateApp as apiUpdateApp } from "@/lib/connections";
 import AppOverview from "./app/AppOverview";
 import AppDeploys from "./app/AppDeploys";
 import AppSettings from "./app/AppSettings";
@@ -26,14 +26,14 @@ const AppDetail = ({ app: initialApp, onBack }: AppDetailProps) => {
   const [conn, setConn] = useState<VMConnection | undefined>();
 
   useEffect(() => {
-    const conns = getConnections();
-    setConn(conns.find(c => c.id === app.connectionId));
-  }, [app.connectionId]);
+    getConnections().then(conns => {
+      setConn(conns.find(c => c.id === app.connection_id));
+    }).catch(() => {});
+  }, [app.connection_id]);
 
-  const updateApp = (updated: AppConfig) => {
+  const handleUpdateApp = async (updated: AppConfig) => {
     setApp(updated);
-    const apps = getApps().map(a => a.id === updated.id ? updated : a);
-    saveApps(apps);
+    try { await apiUpdateApp(updated.id, updated); } catch {}
   };
 
   return (
@@ -64,9 +64,9 @@ const AppDetail = ({ app: initialApp, onBack }: AppDetailProps) => {
       </div>
 
       {activeTab === "overview" && <AppOverview app={app} conn={conn} />}
-      {activeTab === "deploys" && <AppDeploys app={app} conn={conn} onUpdate={updateApp} />}
+      {activeTab === "deploys" && <AppDeploys app={app} conn={conn} onUpdate={handleUpdateApp} />}
       {activeTab === "logs" && <AppLogs app={app} conn={conn} />}
-      {activeTab === "settings" && <AppSettings app={app} conn={conn} onUpdate={updateApp} />}
+      {activeTab === "settings" && <AppSettings app={app} conn={conn} onUpdate={handleUpdateApp} />}
       {activeTab === "database" && <AppDatabase app={app} />}
     </div>
   );

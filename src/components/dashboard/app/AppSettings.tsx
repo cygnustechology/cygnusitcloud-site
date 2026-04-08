@@ -1,23 +1,31 @@
 import { useState } from "react";
 import { Plus, Trash2, Save, Loader2 } from "lucide-react";
-import { AppConfig, VMConnection, syncDeployConfigToAgent, saveAppEnvVars } from "@/lib/connections";
+import { AppConfig, VMConnection, agentFetch, saveAppEnvVars } from "@/lib/connections";
 import { toast } from "sonner";
 
 interface AppSettingsProps { app: AppConfig; conn?: VMConnection; onUpdate: (app: AppConfig) => void; }
 
 const AppSettings = ({ app, conn, onUpdate }: AppSettingsProps) => {
-  const [form, setForm] = useState({ repoUrl: app.repoUrl || "", domain: app.domain || "", port: app.port, buildCmd: app.buildCmd || "npm run build", deployPath: app.deployPath });
-  const [envVars, setEnvVars] = useState<[string, string][]>(Object.entries(app.envVars || {}));
+  const [form, setForm] = useState({ repoUrl: app.repo_url || "", domain: app.domain || "", port: app.port, buildCmd: app.build_cmd || "npm run build", deployPath: app.deploy_path });
+  const [envVars, setEnvVars] = useState<[string, string][]>(Object.entries(app.env_vars || {}));
   const [newKey, setNewKey] = useState(""); const [newVal, setNewVal] = useState(""); const [saving, setSaving] = useState(false);
   const inputClass = "w-full px-3 py-2 rounded-md bg-secondary border border-border text-foreground text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary";
 
   const handleSaveConfig = async () => {
     setSaving(true);
     const envObj = Object.fromEntries(envVars);
-    const updated: AppConfig = { ...app, repoUrl: form.repoUrl || undefined, domain: form.domain || undefined, port: form.port, buildCmd: form.buildCmd || undefined, deployPath: form.deployPath, envVars: envObj };
+    const updated: AppConfig = { ...app, repo_url: form.repoUrl || undefined, domain: form.domain || undefined, port: form.port, build_cmd: form.buildCmd || undefined, deploy_path: form.deployPath, env_vars: envObj };
     onUpdate(updated);
-    if (conn) { try { await syncDeployConfigToAgent(conn, updated); await saveAppEnvVars(conn, app.name, envObj); toast.success("Settings synced to server"); } catch { toast.error("Saved locally but failed to sync"); } }
-    else { toast.success("Settings saved locally"); }
+    if (conn) {
+      try {
+        await agentFetch(conn, `/deploy-configs/${app.id}`, {
+          method: "PUT",
+          body: JSON.stringify({ id: app.id, name: app.name, repoUrl: form.repoUrl, deployPath: form.deployPath, port: form.port, domain: form.domain, buildCmd: form.buildCmd, autoDeploy: app.auto_deploy ?? true, webhookSecret: app.webhook_secret, envVars: envObj }),
+        });
+        await saveAppEnvVars(conn, app.name, envObj);
+        toast.success("Settings synced to server");
+      } catch { toast.error("Saved but failed to sync"); }
+    } else { toast.success("Settings saved"); }
     setSaving(false);
   };
 

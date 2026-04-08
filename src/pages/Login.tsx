@@ -13,15 +13,15 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    setTimeout(() => {
-      const session = login(email, password);
+    try {
+      const session = await login(email, password);
       if (session) { navigate("/dashboard"); } else { setError("Invalid email or password"); }
-      setLoading(false);
-    }, 500);
+    } catch { setError("Connection error. Is the API server running?"); }
+    setLoading(false);
   };
 
   return (
