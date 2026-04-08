@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Server, Plus, Trash2, Wifi, WifiOff, Eye, EyeOff, Star, Pencil, CheckCircle, XCircle, Loader2 } from "lucide-react";
-import { VMConnection, getConnections, saveConnections, testConnection } from "@/lib/connections";
+import { VMConnection, getConnections, saveConnection, updateConnection, deleteConnection as apiDeleteConnection, testConnection } from "@/lib/connections";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,41 +12,40 @@ const ConnectionSettings = () => {
   const [testing, setTesting] = useState<string | null>(null);
   const [form, setForm] = useState({ label: "", agentUrl: "", agentSecret: "" });
 
-  useEffect(() => { setConnections(getConnections()); }, []);
+  const reload = async () => { try { setConnections(await getConnections()); } catch {} };
+  useEffect(() => { reload(); }, []);
 
-  const persist = (updated: VMConnection[]) => { setConnections(updated); saveConnections(updated); };
   const resetForm = () => { setForm({ label: "", agentUrl: "", agentSecret: "" }); setEditingId(null); setShowForm(false); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.label.trim() || !form.agentUrl.trim() || !form.agentSecret.trim()) { toast.error("Please fill in all required fields"); return; }
-    if (editingId) {
-      persist(connections.map(c => c.id === editingId ? { ...c, ...form } : c));
-      toast.success("Connection updated");
-    } else {
-      const newConn: VMConnection = { id: crypto.randomUUID(), ...form, isDefault: connections.length === 0, status: "disconnected" };
-      persist([...connections, newConn]);
-      toast.success("Connection added");
-    }
-    resetForm();
+    try {
+      if (editingId) {
+        await updateConnection(editingId, { label: form.label, agent_url: form.agentUrl, agent_secret: form.agentSecret });
+        toast.success("Connection updated");
+      } else {
+        await saveConnection({ label: form.label, agent_url: form.agentUrl, agent_secret: form.agentSecret, is_default: connections.length === 0 });
+        toast.success("Connection added");
+      }
+      resetForm(); reload();
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : "Failed"); }
   };
 
-  const startEdit = (conn: VMConnection) => { setForm({ label: conn.label, agentUrl: conn.agentUrl, agentSecret: conn.agentSecret }); setEditingId(conn.id); setShowForm(true); };
+  const startEdit = (conn: VMConnection) => { setForm({ label: conn.label, agentUrl: conn.agent_url, agentSecret: conn.agent_secret }); setEditingId(conn.id); setShowForm(true); };
 
-  const deleteConnection = (id: string) => {
-    const updated = connections.filter(c => c.id !== id);
-    if (updated.length > 0 && !updated.some(c => c.isDefault)) updated[0].isDefault = true;
-    persist(updated); toast.success("Connection removed");
+  const handleDelete = async (id: string) => {
+    await apiDeleteConnection(id); toast.success("Connection removed"); reload();
   };
 
-  const setDefault = (id: string) => { persist(connections.map(c => ({ ...c, isDefault: c.id === id }))); toast.success("Default connection updated"); };
+  const setDefault = async (id: string) => { await updateConnection(id, { is_default: true }); toast.success("Default connection updated"); reload(); };
 
   const handleTest = async (id: string) => {
     setTesting(id);
     const conn = connections.find(c => c.id === id);
     if (!conn) { setTesting(null); return; }
     const ok = await testConnection(conn);
-    const updated = connections.map(c => c.id === id ? { ...c, status: (ok ? "connected" : "error") as VMConnection["status"], lastChecked: new Date().toISOString() } : c);
-    persist(updated); setTesting(null);
+    await updateConnection(id, { status: ok ? "connected" : "error" });
+    reload(); setTesting(null);
     if (ok) toast.success("Agent is reachable!"); else toast.error("Could not reach agent.");
   };
 
@@ -96,24 +95,24 @@ const ConnectionSettings = () => {
         <AnimatePresence>
           {connections.map(conn => (
             <motion.div key={conn.id} initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -20 }}
-              className={`stat-card flex items-center gap-4 ${conn.isDefault ? "border-primary/30" : ""}`}>
+              className={`stat-card flex items-center gap-4 ${conn.is_default ? "border-primary/30" : ""}`}>
               <div className="w-10 h-10 rounded-md bg-secondary flex items-center justify-center shrink-0"><Server className="w-5 h-5 text-primary" /></div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-foreground">{conn.label}</p>
-                  {conn.isDefault && <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">DEFAULT</span>}
+                  {conn.is_default && <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">DEFAULT</span>}
                 </div>
-                <p className="text-xs text-muted-foreground font-mono mt-0.5">{extractHost(conn.agentUrl)}</p>
-                {conn.lastChecked && <p className="text-[10px] text-muted-foreground mt-0.5">Checked: {new Date(conn.lastChecked).toLocaleString()}</p>}
+                <p className="text-xs text-muted-foreground font-mono mt-0.5">{extractHost(conn.agent_url)}</p>
+                {conn.last_checked && <p className="text-[10px] text-muted-foreground mt-0.5">Checked: {new Date(conn.last_checked).toLocaleString()}</p>}
               </div>
               <div className="flex items-center gap-1.5">
                 {conn.status === "connected" ? <CheckCircle className="w-4 h-4 text-green-500" /> : conn.status === "error" ? <XCircle className="w-4 h-4 text-destructive" /> : <div className="status-dot stopped" />}
                 <button onClick={() => handleTest(conn.id)} disabled={testing === conn.id} className="p-1.5 rounded-md hover:bg-secondary transition-colors disabled:opacity-50" title="Test">
                   {testing === conn.id ? <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" /> : <Wifi className="w-3.5 h-3.5 text-muted-foreground" />}
                 </button>
-                {!conn.isDefault && <button onClick={() => setDefault(conn.id)} className="p-1.5 rounded-md hover:bg-secondary transition-colors" title="Set default"><Star className="w-3.5 h-3.5 text-muted-foreground" /></button>}
+                {!conn.is_default && <button onClick={() => setDefault(conn.id)} className="p-1.5 rounded-md hover:bg-secondary transition-colors" title="Set default"><Star className="w-3.5 h-3.5 text-muted-foreground" /></button>}
                 <button onClick={() => startEdit(conn)} className="p-1.5 rounded-md hover:bg-secondary transition-colors" title="Edit"><Pencil className="w-3.5 h-3.5 text-muted-foreground" /></button>
-                <button onClick={() => deleteConnection(conn.id)} className="p-1.5 rounded-md hover:bg-secondary transition-colors" title="Delete"><Trash2 className="w-3.5 h-3.5 text-destructive" /></button>
+                <button onClick={() => handleDelete(conn.id)} className="p-1.5 rounded-md hover:bg-secondary transition-colors" title="Delete"><Trash2 className="w-3.5 h-3.5 text-destructive" /></button>
               </div>
             </motion.div>
           ))}

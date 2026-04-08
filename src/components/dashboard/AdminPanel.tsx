@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Users, Plus, Trash2, Shield, ShieldOff, Pencil, X, UserPlus, AlertTriangle } from "lucide-react";
 import { getTenants, createTenant, deleteTenant, toggleTenantStatus, updateTenant, User } from "@/lib/auth";
-import { getApps } from "@/lib/connections";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,27 +10,27 @@ const AdminPanel = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ email: "", name: "", password: "", workspace: "", maxApps: 5, maxDatabases: 3, storageQuotaMb: 1024 });
 
-  const reload = () => setTenants(getTenants());
+  const reload = async () => { try { setTenants(await getTenants()); } catch {} };
   useEffect(() => { reload(); }, []);
 
   const resetForm = () => { setForm({ email: "", name: "", password: "", workspace: "", maxApps: 5, maxDatabases: 3, storageQuotaMb: 1024 }); setEditingId(null); setShowForm(false); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
       if (editingId) {
-        updateTenant(editingId, { email: form.email, name: form.name, workspace: form.workspace, maxApps: form.maxApps, maxDatabases: form.maxDatabases, storageQuotaMb: form.storageQuotaMb, ...(form.password ? { password: form.password } : {}) });
+        await updateTenant(editingId, { email: form.email, name: form.name, workspace: form.workspace, max_apps: form.maxApps, max_databases: form.maxDatabases, storage_quota_mb: form.storageQuotaMb });
         toast.success("Tenant updated");
       } else {
         if (!form.email || !form.name || !form.password || !form.workspace) { toast.error("Fill all required fields"); return; }
-        createTenant(form); toast.success("Tenant created");
+        await createTenant(form); toast.success("Tenant created");
       }
       resetForm(); reload();
     } catch (err: unknown) { toast.error(err instanceof Error ? err.message : "Failed"); }
   };
 
-  const startEdit = (t: User) => { setForm({ email: t.email, name: t.name, password: "", workspace: t.workspace, maxApps: t.maxApps ?? 5, maxDatabases: t.maxDatabases ?? 3, storageQuotaMb: t.storageQuotaMb ?? 1024 }); setEditingId(t.id); setShowForm(true); };
-  const handleDelete = (id: string) => { if (!confirm("Delete this tenant and all their data?")) return; deleteTenant(id); toast.success("Tenant deleted"); reload(); };
-  const handleToggle = (id: string) => { toggleTenantStatus(id); reload(); };
+  const startEdit = (t: User) => { setForm({ email: t.email, name: t.name, password: "", workspace: t.workspace, maxApps: t.max_apps ?? 5, maxDatabases: t.max_databases ?? 3, storageQuotaMb: t.storage_quota_mb ?? 1024 }); setEditingId(t.id); setShowForm(true); };
+  const handleDelete = async (id: string) => { if (!confirm("Delete this tenant and all their data?")) return; await deleteTenant(id); toast.success("Tenant deleted"); reload(); };
+  const handleToggle = async (id: string) => { await toggleTenantStatus(id); reload(); };
 
   return (
     <div className="space-y-6">
@@ -72,7 +71,7 @@ const AdminPanel = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2"><p className="text-sm font-medium text-foreground">{t.name}</p>{t.disabled && <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-destructive/10 text-destructive">DISABLED</span>}</div>
               <p className="text-xs text-muted-foreground">{t.email}</p>
-              <p className="text-[10px] text-muted-foreground font-mono mt-0.5">workspace: {t.workspace} • max apps: {t.maxApps} • joined: {new Date(t.createdAt).toLocaleDateString()}</p>
+              <p className="text-[10px] text-muted-foreground font-mono mt-0.5">workspace: {t.workspace} • max apps: {t.max_apps} • joined: {new Date(t.created_at).toLocaleDateString()}</p>
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
               <button onClick={() => handleToggle(t.id)} className="p-1.5 rounded-md hover:bg-secondary transition-colors" title={t.disabled ? "Enable" : "Disable"}>{t.disabled ? <Shield className="w-3.5 h-3.5 text-green-500" /> : <ShieldOff className="w-3.5 h-3.5 text-yellow-500" />}</button>
