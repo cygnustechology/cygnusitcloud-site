@@ -32,8 +32,8 @@ const ComplianceSection = () => (
         <h2 className="text-3xl md:text-4xl font-heading text-primary-foreground mt-3 mb-4">
           Governance & Regulatory Assurance
         </h2>
-        <p className="text-primary-foreground/60 text-justify-all">
-          CygnusITCloud is purpose-built for organisations that require auditable, regulation-compliant cloud infrastructure.
+        <p className="text-primary-foreground/60 text-justify-all text-center">
+          CygnusCloud® is built for organizations that require regulation-compliant Private Cloud Infrastructure & Low-Latency Performance
         </p>
       </div>
 
