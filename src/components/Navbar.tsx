@@ -39,6 +39,14 @@ const Navbar = () => {
           >
             <a href="#contact">Get a Quote</a>
           </Button>
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="border-cygnus-red text-cygnus-red hover:bg-cygnus-red hover:text-white font-semibold uppercase tracking-wide"
+          >
+            <a href="/login">Login</a>
+          </Button>
         </div>
 
         <button

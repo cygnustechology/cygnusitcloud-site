@@ -73,6 +73,68 @@
   }
 }
 
+@layer components {
+  .stat-card {
+    @apply bg-card border border-border rounded-lg p-5 transition-all duration-200;
+    box-shadow: 0 2px 12px hsl(0 0% 80% / 0.25);
+  }
+
+  .stat-card:hover {
+    border-color: hsl(var(--ring) / 0.3);
+    box-shadow: 0 0 20px hsl(var(--ring) / 0.1);
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-all duration-150 cursor-pointer;
+    color: hsl(var(--sidebar-foreground));
+  }
+
+  .sidebar-item:hover {
+    @apply bg-sidebar-accent text-sidebar-accent-foreground;
+  }
+
+  .sidebar-item.active {
+    background: hsl(var(--cygnus-red) / 0.12);
+    color: hsl(var(--cygnus-red));
+    border-left: 2px solid hsl(var(--cygnus-red));
+  }
+
+  .resource-bar {
+    @apply h-2 rounded-full overflow-hidden;
+    background: hsl(var(--muted));
+  }
+
+  .resource-bar-fill {
+    @apply h-full rounded-full transition-all duration-500;
+  }
+
+  .instance-row {
+    @apply flex items-center gap-4 px-4 py-3 border-b border-border transition-colors duration-150 cursor-pointer;
+  }
+
+  .instance-row:hover {
+    background: hsl(var(--muted) / 0.5);
+  }
+
+  .status-dot {
+    @apply w-2.5 h-2.5 rounded-full;
+  }
+
+  .status-dot.running {
+    background: hsl(142 60% 40%);
+    box-shadow: 0 0 8px hsl(142 60% 40% / 0.5);
+  }
+
+  .status-dot.stopped {
+    background: hsl(var(--muted-foreground));
+  }
+
+  .status-dot.error {
+    background: hsl(var(--destructive));
+    box-shadow: 0 0 8px hsl(var(--destructive) / 0.5);
+  }
+}
+
 @layer utilities {
   .gradient-dark {
     background: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 18%));
