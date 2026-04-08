@@ -147,11 +147,8 @@ CREATE TABLE IF NOT EXISTS databases (
 ------------------------------------------------------------
 -- SEED: Default admin user
 ------------------------------------------------------------
-INSERT INTO users (email, name, password_hash, role, workspace, max_apps, max_databases, storage_quota_mb)
-VALUES ('admin@cygnus.cloud', 'Admin', '$2a$10$placeholder', 'admin', '__admin__', -1, -1, -1)
-ON CONFLICT (email) DO NOTHING;
-
--- NOTE: Run `node seed-admin.js` after schema setup to set the correct bcrypt hash.
+-- NOTE: No hardcoded admin user. Run seed-admin.js with env vars after schema setup:
+--   ADMIN_EMAIL=administrator@cygnusitcloud.com ADMIN_PASSWORD=yourpass node seed-admin.js
 
 ------------------------------------------------------------
 -- SEED: Register known Cygnus projects

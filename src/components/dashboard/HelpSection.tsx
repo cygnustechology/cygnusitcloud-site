@@ -6,7 +6,7 @@ interface HelpTopic { id: string; icon: React.ElementType; title: string; sectio
 
 const helpTopics: HelpTopic[] = [
   { id: "quickstart", icon: Rocket, title: "Quick Start Guide", sections: [
-    { heading: "Getting Started", content: `1. **Login** with your admin credentials (default: admin@cygnus.cloud / admin123)\n2. **Go to Settings** → Add a VM Connection\n3. **Create an App** → Enter app name, GitHub repo URL, domain\n4. **Set up GitHub Webhook** → Copy webhook URL and secret\n5. **Deploy** → Push code to GitHub or click "Deploy Now"` },
+    { heading: "Getting Started", content: `1. **Login** with your admin credentials\n2. **Go to Settings** → Add a VM Connection\n3. **Create an App** → Enter app name, GitHub repo URL, domain\n4. **Set up GitHub Webhook** → Copy webhook URL and secret\n5. **Deploy** → Push code to GitHub or click "Deploy Now"` },
   ]},
   { id: "apps", icon: Box, title: "App Management", sections: [{ heading: "Creating an App", content: "Use the Create App wizard to set up name, repo, domain, and build command." }]},
   { id: "deploy", icon: GitBranch, title: "Deployment & Publishing", sections: [{ heading: "Auto-Deploy via GitHub Webhook", content: "Set up a webhook from your GitHub repo to auto-deploy on push." }]},
