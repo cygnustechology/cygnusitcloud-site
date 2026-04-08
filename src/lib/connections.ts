@@ -1,46 +1,46 @@
-const STORAGE_KEY = "cloudpanel_config";
+import { apiFetch } from "./api";
 
 export interface VMConnection {
   id: string;
   label: string;
-  agentUrl: string;
-  agentSecret: string;
-  isDefault: boolean;
+  agent_url: string;
+  agent_secret: string;
+  is_default: boolean;
   status: "connected" | "disconnected" | "error";
-  lastChecked?: string;
+  last_checked?: string;
 }
 
 export interface AppConfig {
   id: string;
-  connectionId: string;
+  connection_id: string;
   name: string;
-  repoUrl?: string;
-  deployPath: string;
+  repo_url?: string;
+  deploy_path: string;
   domain?: string;
   port: number;
-  buildCmd?: string;
+  build_cmd?: string;
   status: "running" | "deploying" | "stopped" | "failed" | "idle";
-  lastDeployed?: string;
-  autoDeploy?: boolean;
-  webhookSecret?: string;
-  envVars?: Record<string, string>;
-  createdAt: string;
+  last_deployed?: string;
+  auto_deploy?: boolean;
+  webhook_secret?: string;
+  env_vars?: Record<string, string>;
+  created_at: string;
 }
 
 export type DeploymentTarget = AppConfig;
 
 export interface DatabaseConfig {
   id: string;
-  connectionId: string;
+  connection_id: string;
   engine: "postgresql" | "mysql" | "mariadb" | "redis" | "mongodb";
-  containerName: string;
+  container_name: string;
   port: number;
-  dbName: string;
-  dbUser: string;
-  dbPassword: string;
+  db_name: string;
+  db_user: string;
+  db_password: string;
   status: "active" | "inactive" | "error";
-  containerId?: string;
-  appId?: string;
+  container_id?: string;
+  app_id?: string;
 }
 
 export interface DeployLogEntry {
@@ -52,52 +52,74 @@ export interface DeployLogEntry {
   duration: number;
 }
 
-interface StoreData {
-  connections: VMConnection[];
-  apps: AppConfig[];
-  databases: DatabaseConfig[];
-  deployments?: AppConfig[];
+// --- API-backed CRUD ---
+
+export async function getConnections(): Promise<VMConnection[]> {
+  return apiFetch<VMConnection[]>("/api/connections");
 }
 
-function load(): StoreData {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return { connections: [], apps: [], databases: [] };
-  const data = JSON.parse(raw);
-  if (data.deployments && !data.apps) {
-    data.apps = data.deployments.map((d: any) => ({ ...d, createdAt: d.createdAt || new Date().toISOString() }));
-    delete data.deployments;
-  }
-  if (!data.apps) data.apps = [];
-  return data;
+export async function saveConnection(conn: Partial<VMConnection> & { label: string; agent_url: string; agent_secret: string }): Promise<VMConnection> {
+  return apiFetch<VMConnection>("/api/connections", { method: "POST", body: JSON.stringify(conn) });
 }
 
-function save(data: StoreData) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+export async function updateConnection(id: string, updates: Partial<VMConnection>): Promise<VMConnection> {
+  return apiFetch<VMConnection>(`/api/connections/${id}`, { method: "PUT", body: JSON.stringify(updates) });
 }
 
-export function getConnections(): VMConnection[] { return load().connections; }
-export function saveConnections(connections: VMConnection[]) { const d = load(); d.connections = connections; save(d); }
-export function getDefaultConnection(): VMConnection | undefined { return getConnections().find(c => c.isDefault); }
+export async function deleteConnection(id: string): Promise<void> {
+  await apiFetch(`/api/connections/${id}`, { method: "DELETE" });
+}
 
-export function getApps(): AppConfig[] { return load().apps; }
-export function saveApps(apps: AppConfig[]) { const d = load(); d.apps = apps; save(d); }
-export function getDeployments(): AppConfig[] { return getApps(); }
-export function saveDeployments(apps: AppConfig[]) { saveApps(apps); }
+export async function getDefaultConnection(): Promise<VMConnection | undefined> {
+  const conns = await getConnections();
+  return conns.find(c => c.is_default);
+}
 
-export function getDatabases(): DatabaseConfig[] { return load().databases; }
-export function saveDatabases(databases: DatabaseConfig[]) { const d = load(); d.databases = databases; save(d); }
+export async function getApps(): Promise<AppConfig[]> {
+  return apiFetch<AppConfig[]>("/api/apps");
+}
+
+export async function createApp(app: Partial<AppConfig>): Promise<AppConfig> {
+  return apiFetch<AppConfig>("/api/apps", { method: "POST", body: JSON.stringify(app) });
+}
+
+export async function updateApp(id: string, updates: Partial<AppConfig>): Promise<AppConfig> {
+  return apiFetch<AppConfig>(`/api/apps/${id}`, { method: "PUT", body: JSON.stringify(updates) });
+}
+
+export async function deleteApp(id: string): Promise<void> {
+  await apiFetch(`/api/apps/${id}`, { method: "DELETE" });
+}
+
+export async function getDatabases(): Promise<DatabaseConfig[]> {
+  return apiFetch<DatabaseConfig[]>("/api/databases");
+}
+
+export async function createDatabase(db: Partial<DatabaseConfig>): Promise<DatabaseConfig> {
+  return apiFetch<DatabaseConfig>("/api/databases", { method: "POST", body: JSON.stringify(db) });
+}
+
+export async function updateDatabase(id: string, updates: Partial<DatabaseConfig>): Promise<DatabaseConfig> {
+  return apiFetch<DatabaseConfig>(`/api/databases/${id}`, { method: "PUT", body: JSON.stringify(updates) });
+}
+
+export async function deleteDatabase(id: string): Promise<void> {
+  await apiFetch(`/api/databases/${id}`, { method: "DELETE" });
+}
+
+// --- Agent communication (still direct from browser to agent) ---
 
 export async function agentFetch<T = unknown>(
   connection: VMConnection,
   path: string,
   options?: RequestInit
 ): Promise<T> {
-  const url = `${connection.agentUrl.replace(/\/$/, '')}${path}`;
+  const url = `${connection.agent_url.replace(/\/$/, '')}${path}`;
   const res = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "x-agent-secret": connection.agentSecret,
+      "x-agent-secret": connection.agent_secret,
       ...(options?.headers || {}),
     },
   });
@@ -110,7 +132,7 @@ export async function agentFetch<T = unknown>(
 
 export async function testConnection(connection: VMConnection): Promise<boolean> {
   try {
-    const url = `${connection.agentUrl.replace(/\/$/, '')}/health`;
+    const url = `${connection.agent_url.replace(/\/$/, '')}/health`;
     const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
     return res.ok;
   } catch {
@@ -118,60 +140,22 @@ export async function testConnection(connection: VMConnection): Promise<boolean>
   }
 }
 
-export async function syncDeployConfigToAgent(
-  connection: VMConnection,
-  app: AppConfig
-): Promise<void> {
-  await agentFetch(connection, `/deploy-configs/${app.id}`, {
-    method: "PUT",
-    body: JSON.stringify({
-      id: app.id, name: app.name, repoUrl: app.repoUrl, deployPath: app.deployPath,
-      port: app.port, domain: app.domain, buildCmd: app.buildCmd,
-      autoDeploy: app.autoDeploy ?? true, webhookSecret: app.webhookSecret, envVars: app.envVars || {},
-    }),
-  });
-}
-
-export async function deleteDeployConfigFromAgent(
-  connection: VMConnection,
-  appId: string
-): Promise<void> {
-  await agentFetch(connection, `/deploy-configs/${appId}`, { method: "DELETE" });
-}
-
-export async function fetchDeployLogs(
-  connection: VMConnection,
-  appName: string
-): Promise<DeployLogEntry[]> {
+export async function fetchDeployLogs(connection: VMConnection, appName: string): Promise<DeployLogEntry[]> {
   const result = await agentFetch<{ logs: DeployLogEntry[] }>(connection, `/deploy-log/${encodeURIComponent(appName)}`);
   return result.logs;
 }
 
-export async function fetchAppLogs(
-  connection: VMConnection,
-  appName: string,
-  lines = 100
-): Promise<string> {
+export async function fetchAppLogs(connection: VMConnection, appName: string, lines = 100): Promise<string> {
   const result = await agentFetch<{ logs: string }>(connection, `/apps/${encodeURIComponent(appName)}/logs?lines=${lines}`);
   return result.logs;
 }
 
-export async function fetchAppStatus(
-  connection: VMConnection,
-  appName: string
-): Promise<{ state: string; status: string; ports: string }> {
+export async function fetchAppStatus(connection: VMConnection, appName: string): Promise<{ state: string; status: string; ports: string }> {
   return agentFetch(connection, `/apps/${encodeURIComponent(appName)}/status`);
 }
 
-export async function saveAppEnvVars(
-  connection: VMConnection,
-  appName: string,
-  envVars: Record<string, string>
-): Promise<void> {
-  await agentFetch(connection, `/apps/${encodeURIComponent(appName)}/env`, {
-    method: "PUT",
-    body: JSON.stringify({ envVars }),
-  });
+export async function saveAppEnvVars(connection: VMConnection, appName: string, envVars: Record<string, string>): Promise<void> {
+  await agentFetch(connection, `/apps/${encodeURIComponent(appName)}/env`, { method: "PUT", body: JSON.stringify({ envVars }) });
 }
 
 export function generateWebhookSecret(): string {
@@ -180,10 +164,17 @@ export function generateWebhookSecret(): string {
   return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
 }
 
-export function getNextAvailablePort(): number {
-  const apps = getApps();
+export async function getNextAvailablePort(): Promise<number> {
+  const apps = await getApps();
   const usedPorts = new Set(apps.map(a => a.port));
   let port = 3001;
   while (usedPorts.has(port)) port++;
   return port;
 }
+
+// Legacy compat aliases
+export function saveConnections(_: VMConnection[]) { console.warn("saveConnections is deprecated, use saveConnection/updateConnection"); }
+export function saveApps(_: AppConfig[]) { console.warn("saveApps is deprecated, use createApp/updateApp"); }
+export function getDeployments() { return getApps(); }
+export function saveDeployments(_: AppConfig[]) { console.warn("saveDeployments is deprecated"); }
+export function saveDatabases(_: DatabaseConfig[]) { console.warn("saveDatabases is deprecated"); }

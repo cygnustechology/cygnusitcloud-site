@@ -20,7 +20,10 @@ const AppList = ({ onSelectApp, onCreateApp }: AppListProps) => {
   const [apps, setApps] = useState<AppConfig[]>([]);
   const [connections, setConnections] = useState<VMConnection[]>([]);
 
-  useEffect(() => { setApps(getApps()); setConnections(getConnections()); }, []);
+  useEffect(() => {
+    getApps().then(setApps).catch(() => {});
+    getConnections().then(setConnections).catch(() => {});
+  }, []);
 
   const getConnLabel = (id: string) => connections.find(c => c.id === id)?.label || "—";
 
@@ -62,7 +65,7 @@ const AppList = ({ onSelectApp, onCreateApp }: AppListProps) => {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">{app.name}</p>
-                  <p className="text-xs text-muted-foreground font-mono">{getConnLabel(app.connectionId)}</p>
+                  <p className="text-xs text-muted-foreground font-mono">{getConnLabel(app.connection_id)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
@@ -76,21 +79,21 @@ const AppList = ({ onSelectApp, onCreateApp }: AppListProps) => {
                 <span className="font-mono">{app.domain}</span>
               </div>
             )}
-            {app.repoUrl && (
+            {app.repo_url && (
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
                 <GitBranch className="w-3 h-3" />
-                <span className="font-mono truncate">{app.repoUrl.replace("https://github.com/", "")}</span>
+                <span className="font-mono truncate">{app.repo_url.replace("https://github.com/", "")}</span>
               </div>
             )}
             <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
               <span className="text-[10px] text-muted-foreground font-mono">Port {app.port}</span>
-              {app.lastDeployed && (
+              {app.last_deployed && (
                 <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                   <Clock className="w-2.5 h-2.5" />
-                  {new Date(app.lastDeployed).toLocaleDateString()}
+                  {new Date(app.last_deployed).toLocaleDateString()}
                 </div>
               )}
-              {app.autoDeploy !== false && (
+              {app.auto_deploy !== false && (
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/15 text-primary font-medium">AUTO</span>
               )}
             </div>

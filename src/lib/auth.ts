@@ -1,5 +1,7 @@
-const AUTH_KEY = "cygnus_auth";
-const USERS_KEY = "cygnus_users";
+import { apiFetch } from "./api";
+
+const TOKEN_KEY = "cygnus_token";
+const SESSION_KEY = "cygnus_auth";
 
 export type UserRole = "admin" | "tenant";
 
@@ -8,14 +10,13 @@ export interface User {
   email: string;
   name: string;
   role: UserRole;
-  password: string;
   workspace: string;
-  createdAt: string;
-  lastLogin?: string;
+  created_at: string;
+  last_login?: string;
   disabled?: boolean;
-  maxApps?: number;
-  maxDatabases?: number;
-  storageQuotaMb?: number;
+  max_apps?: number;
+  max_databases?: number;
+  storage_quota_mb?: number;
 }
 
 export interface AuthSession {
@@ -27,64 +28,27 @@ export interface AuthSession {
   loginAt: string;
 }
 
-const DEFAULT_ADMIN: User = {
-  id: "admin-001",
-  email: "admin@cygnus.cloud",
-  name: "Admin",
-  role: "admin",
-  password: "admin123",
-  workspace: "__admin__",
-  createdAt: new Date().toISOString(),
-  maxApps: -1,
-  maxDatabases: -1,
-  storageQuotaMb: -1,
-};
-
-function getUsers(): User[] {
-  const raw = localStorage.getItem(USERS_KEY);
-  if (!raw) {
-    const users = [DEFAULT_ADMIN];
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    return users;
+export async function login(email: string, password: string): Promise<AuthSession | null> {
+  try {
+    const data = await apiFetch<{ token: string; session: AuthSession }>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+    localStorage.setItem(TOKEN_KEY, data.token);
+    localStorage.setItem(SESSION_KEY, JSON.stringify(data.session));
+    return data.session;
+  } catch {
+    return null;
   }
-  const users = JSON.parse(raw);
-  if (!users.find((u: User) => u.id === "admin-001")) {
-    users.unshift(DEFAULT_ADMIN);
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }
-  return users;
-}
-
-function saveUsers(users: User[]) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-
-export function login(email: string, password: string): AuthSession | null {
-  const users = getUsers();
-  const user = users.find(u => u.email === email && u.password === password && !u.disabled);
-  if (!user) return null;
-
-  user.lastLogin = new Date().toISOString();
-  saveUsers(users);
-
-  const session: AuthSession = {
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    workspace: user.workspace,
-    loginAt: new Date().toISOString(),
-  };
-  localStorage.setItem(AUTH_KEY, JSON.stringify(session));
-  return session;
 }
 
 export function logout() {
-  localStorage.removeItem(AUTH_KEY);
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(SESSION_KEY);
 }
 
 export function getSession(): AuthSession | null {
-  const raw = localStorage.getItem(AUTH_KEY);
+  const raw = localStorage.getItem(SESSION_KEY);
   if (!raw) return null;
   return JSON.parse(raw);
 }
@@ -93,15 +57,16 @@ export function isAdmin(): boolean {
   return getSession()?.role === "admin";
 }
 
-export function getAllUsers(): User[] {
-  return getUsers();
+// Tenant management - all API-backed
+export async function getAllUsers(): Promise<User[]> {
+  return apiFetch<User[]>("/api/tenants");
 }
 
-export function getTenants(): User[] {
-  return getUsers().filter(u => u.role === "tenant");
+export async function getTenants(): Promise<User[]> {
+  return apiFetch<User[]>("/api/tenants");
 }
 
-export function createTenant(data: {
+export async function createTenant(data: {
   email: string;
   name: string;
   password: string;
@@ -109,62 +74,36 @@ export function createTenant(data: {
   maxApps?: number;
   maxDatabases?: number;
   storageQuotaMb?: number;
-}): User {
-  const users = getUsers();
-  if (users.find(u => u.email === data.email)) {
-    throw new Error("Email already exists");
-  }
-  if (users.find(u => u.workspace === data.workspace)) {
-    throw new Error("Workspace name already taken");
-  }
-  const tenant: User = {
-    id: crypto.randomUUID(),
-    email: data.email,
-    name: data.name,
-    role: "tenant",
-    password: data.password,
-    workspace: data.workspace.toLowerCase().replace(/[^a-z0-9_-]/g, "-"),
-    createdAt: new Date().toISOString(),
-    maxApps: data.maxApps ?? 5,
-    maxDatabases: data.maxDatabases ?? 3,
-    storageQuotaMb: data.storageQuotaMb ?? 1024,
-  };
-  users.push(tenant);
-  saveUsers(users);
-  return tenant;
+}): Promise<User> {
+  return apiFetch<User>("/api/tenants", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
-export function updateTenant(id: string, updates: Partial<User>) {
-  const users = getUsers();
-  const idx = users.findIndex(u => u.id === id);
-  if (idx === -1) throw new Error("User not found");
-  users[idx] = { ...users[idx], ...updates };
-  saveUsers(users);
-  return users[idx];
+export async function updateTenant(id: string, updates: Partial<User>): Promise<User> {
+  return apiFetch<User>(`/api/tenants/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(updates),
+  });
 }
 
-export function deleteTenant(id: string) {
-  const users = getUsers().filter(u => u.id !== id && u.id !== "admin-001");
-  saveUsers([...getUsers().filter(u => u.id === "admin-001"), ...users.filter(u => u.id !== "admin-001")]);
+export async function deleteTenant(id: string): Promise<void> {
+  await apiFetch(`/api/tenants/${id}`, { method: "DELETE" });
 }
 
-export function toggleTenantStatus(id: string) {
-  const users = getUsers();
-  const user = users.find(u => u.id === id);
-  if (!user || user.role === "admin") return;
-  user.disabled = !user.disabled;
-  saveUsers(users);
-  return user;
+export async function toggleTenantStatus(id: string): Promise<{ id: string; disabled: boolean }> {
+  return apiFetch(`/api/tenants/${id}/toggle`, { method: "POST" });
 }
 
-export function getTenantById(id: string): User | undefined {
-  return getUsers().find(u => u.id === id);
+export async function getTenantById(id: string): Promise<User | undefined> {
+  const tenants = await getTenants();
+  return tenants.find(u => u.id === id);
 }
 
-export function changePassword(userId: string, newPassword: string) {
-  const users = getUsers();
-  const user = users.find(u => u.id === userId);
-  if (!user) throw new Error("User not found");
-  user.password = newPassword;
-  saveUsers(users);
+export async function changePassword(userId: string, newPassword: string): Promise<void> {
+  await apiFetch("/api/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({ newPassword }),
+  });
 }
