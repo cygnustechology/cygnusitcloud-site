@@ -108,9 +108,11 @@ node index.js   # or use PM2: pm2 start index.js --name cygnus-api
 ### Frontend
 The frontend connects to the API via `VITE_API_URL` (defaults to `http://103.152.12.106:4000`).
 
-### Default Credentials
-- **Email:** `admin@cygnus.cloud`
-- **Password:** `admin123`
+### Default Admin
+Credentials are set via environment variables during seeding — never hardcoded:
+```bash
+ADMIN_EMAIL=administrator@cygnusitcloud.com ADMIN_PASSWORD=yourpass node seed-admin.js
+```
 
 ## Dashboard Features
 
