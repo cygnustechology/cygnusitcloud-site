@@ -6,7 +6,11 @@ interface AppDatabaseProps { app: AppConfig; }
 
 const AppDatabase = ({ app }: AppDatabaseProps) => {
   const [databases, setDatabases] = useState<DatabaseConfig[]>([]);
-  useEffect(() => { const all = getDatabases(); setDatabases(all.filter(db => db.appId === app.id || db.connectionId === app.connectionId)); }, [app.id, app.connectionId]);
+  useEffect(() => {
+    getDatabases().then(all => {
+      setDatabases(all.filter(db => db.app_id === app.id || db.connection_id === app.connection_id));
+    }).catch(() => {});
+  }, [app.id, app.connection_id]);
 
   return (
     <div className="space-y-4">
@@ -19,7 +23,7 @@ const AppDatabase = ({ app }: AppDatabaseProps) => {
             {databases.map(db => (
               <div key={db.id} className="flex items-center gap-3 p-3 rounded-md bg-secondary/50">
                 <Database className="w-4 h-4 text-primary shrink-0" />
-                <div className="flex-1 min-w-0"><p className="text-sm font-medium text-foreground">{db.dbName || db.containerName}</p><p className="text-xs text-muted-foreground font-mono">{db.engine} • port {db.port}</p></div>
+                <div className="flex-1 min-w-0"><p className="text-sm font-medium text-foreground">{db.db_name || db.container_name}</p><p className="text-xs text-muted-foreground font-mono">{db.engine} • port {db.port}</p></div>
                 <div className={`status-dot ${db.status === "active" ? "running" : "stopped"}`} />
               </div>
             ))}

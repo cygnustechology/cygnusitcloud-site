@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Database, Plus, Trash2, Play, Square, Loader2 } from "lucide-react";
-import { DatabaseConfig, getDatabases, saveDatabases, getConnections, VMConnection, agentFetch } from "@/lib/connections";
+import { DatabaseConfig, getDatabases, getConnections, VMConnection, agentFetch, createDatabase as apiCreateDatabase, deleteDatabase as apiDeleteDatabase, updateDatabase as apiUpdateDatabase } from "@/lib/connections";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -19,9 +19,10 @@ const DatabaseSettings = () => {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ connectionId: "", engine: "postgresql" as DatabaseConfig["engine"], containerName: "", port: 5432, dbName: "", dbUser: "", dbPassword: "" });
 
-  useEffect(() => { setDatabases(getDatabases()); setConnections(getConnections()); }, []);
-
-  const persist = (updated: DatabaseConfig[]) => { setDatabases(updated); saveDatabases(updated); };
+  const reload = async () => {
+    try { const [dbs, conns] = await Promise.all([getDatabases(), getConnections()]); setDatabases(dbs); setConnections(conns); } catch {}
+  };
+  useEffect(() => { reload(); }, []);
 
   const handleCreate = async () => {
     if (!form.connectionId || !form.containerName.trim() || !form.dbName.trim()) { toast.error("Please fill in all required fields"); return; }
@@ -30,34 +31,34 @@ const DatabaseSettings = () => {
     setCreating(true);
     try {
       const result = await agentFetch<{ success: boolean; containerId?: string }>(conn, "/databases", { method: "POST", body: JSON.stringify({ engine: form.engine, name: form.containerName, port: form.port, dbName: form.dbName, dbUser: form.dbUser, dbPassword: form.dbPassword }) });
-      const newDb: DatabaseConfig = { id: crypto.randomUUID(), ...form, status: "active", containerId: result.containerId };
-      persist([...databases, newDb]);
+      await apiCreateDatabase({ connection_id: form.connectionId, engine: form.engine, container_name: form.containerName, port: form.port, db_name: form.dbName, db_user: form.dbUser, db_password: form.dbPassword, container_id: result.containerId });
       toast.success(`Database "${form.dbName}" created on ${conn.label}`);
       setShowForm(false);
       setForm({ connectionId: "", engine: "postgresql", containerName: "", port: 5432, dbName: "", dbUser: "", dbPassword: "" });
+      reload();
     } catch (err: unknown) { toast.error(`Failed: ${err instanceof Error ? err.message : "Unknown error"}`); }
     finally { setCreating(false); }
   };
 
   const deleteDb = async (db: DatabaseConfig) => {
-    const conn = connections.find(c => c.id === db.connectionId);
-    if (conn && db.containerId) { try { await agentFetch(conn, `/containers/${db.containerId}/remove`, { method: "POST" }); } catch {} }
-    persist(databases.filter(d => d.id !== db.id)); toast.success("Database removed");
+    const conn = connections.find(c => c.id === db.connection_id);
+    if (conn && db.container_id) { try { await agentFetch(conn, `/containers/${db.container_id}/remove`, { method: "POST" }); } catch {} }
+    await apiDeleteDatabase(db.id); toast.success("Database removed"); reload();
   };
 
   const toggleDb = async (db: DatabaseConfig) => {
-    const conn = connections.find(c => c.id === db.connectionId);
-    if (!conn || !db.containerId) return;
+    const conn = connections.find(c => c.id === db.connection_id);
+    if (!conn || !db.container_id) return;
     const action = db.status === "active" ? "stop" : "start";
     try {
-      await agentFetch(conn, `/containers/${db.containerId}/${action}`, { method: "POST" });
-      persist(databases.map(d => d.id === db.id ? { ...d, status: action === "stop" ? "inactive" as const : "active" as const } : d));
-      toast.success(`Database ${action}ed`);
+      await agentFetch(conn, `/containers/${db.container_id}/${action}`, { method: "POST" });
+      await apiUpdateDatabase(db.id, { status: action === "stop" ? "inactive" : "active" });
+      toast.success(`Database ${action}ed`); reload();
     } catch (err: unknown) { toast.error(err instanceof Error ? err.message : "Failed"); }
   };
 
   const getConnLabel = (id: string) => connections.find(c => c.id === id)?.label || "—";
-  const getConnHost = (id: string) => { const c = connections.find(c2 => c2.id === id); try { return c ? new URL(c.agentUrl).hostname : "—"; } catch { return "—"; } };
+  const getConnHost = (id: string) => { const c = connections.find(c2 => c2.id === id); try { return c ? new URL(c.agent_url).hostname : "—"; } catch { return "—"; } };
 
   return (
     <div className="space-y-6">
@@ -95,8 +96,8 @@ const DatabaseSettings = () => {
           <motion.div key={db.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="stat-card flex items-center gap-4">
             <div className="w-10 h-10 rounded-md bg-secondary flex items-center justify-center shrink-0"><Database className="w-5 h-5 text-primary" /></div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground">{db.dbName || db.containerName}</p>
-              <p className="text-xs text-muted-foreground font-mono mt-0.5">{engines.find(e => e.id === db.engine)?.label} • {getConnHost(db.connectionId)}:{db.port} • {getConnLabel(db.connectionId)}</p>
+              <p className="text-sm font-medium text-foreground">{db.db_name || db.container_name}</p>
+              <p className="text-xs text-muted-foreground font-mono mt-0.5">{engines.find(e => e.id === db.engine)?.label} • {getConnHost(db.connection_id)}:{db.port} • {getConnLabel(db.connection_id)}</p>
             </div>
             <div className="flex items-center gap-2">
               <div className={`status-dot ${db.status === "active" ? "running" : "stopped"}`} />

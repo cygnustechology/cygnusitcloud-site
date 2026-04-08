@@ -8,7 +8,7 @@ const AppOverview = ({ app, conn }: AppOverviewProps) => {
     { label: "Server", value: conn?.label || "—", icon: Server },
     { label: "Port", value: String(app.port), icon: Terminal },
     { label: "Domain", value: app.domain || "Not set", icon: Globe },
-    { label: "Created", value: new Date(app.createdAt).toLocaleDateString(), icon: Clock },
+    { label: "Created", value: new Date(app.created_at).toLocaleDateString(), icon: Clock },
   ];
 
   return (
@@ -21,10 +21,10 @@ const AppOverview = ({ app, conn }: AppOverviewProps) => {
           </div>
         ))}
       </div>
-      {app.repoUrl && (
+      {app.repo_url && (
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-2"><GitBranch className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Repository</span></div>
-          <a href={app.repoUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-mono text-primary hover:underline flex items-center gap-1.5">{app.repoUrl.replace("https://github.com/", "")}<ExternalLink className="w-3 h-3" /></a>
+          <a href={app.repo_url} target="_blank" rel="noopener noreferrer" className="text-sm font-mono text-primary hover:underline flex items-center gap-1.5">{app.repo_url.replace("https://github.com/", "")}<ExternalLink className="w-3 h-3" /></a>
         </div>
       )}
       {app.domain && (
@@ -33,10 +33,10 @@ const AppOverview = ({ app, conn }: AppOverviewProps) => {
           <a href={`http://${app.domain}`} target="_blank" rel="noopener noreferrer" className="text-sm font-mono text-primary hover:underline flex items-center gap-1.5">{app.domain}<ExternalLink className="w-3 h-3" /></a>
         </div>
       )}
-      {app.lastDeployed && (
+      {app.last_deployed && (
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-2"><Clock className="w-4 h-4 text-primary" /><span className="text-xs text-muted-foreground">Last Deployed</span></div>
-          <p className="text-sm font-mono text-foreground">{new Date(app.lastDeployed).toLocaleString()}</p>
+          <p className="text-sm font-mono text-foreground">{new Date(app.last_deployed).toLocaleString()}</p>
         </div>
       )}
     </div>

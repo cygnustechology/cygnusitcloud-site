@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, ArrowRight, Check, Copy, Rocket } from "lucide-react";
-import { VMConnection, AppConfig, getConnections, getApps, saveApps, getNextAvailablePort, generateWebhookSecret, syncDeployConfigToAgent } from "@/lib/connections";
+import { VMConnection, AppConfig, getConnections, createApp, getNextAvailablePort, generateWebhookSecret, agentFetch } from "@/lib/connections";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -21,10 +21,13 @@ const CreateApp = ({ onBack, onCreated }: CreateAppProps) => {
   });
 
   useEffect(() => {
-    const conns = getConnections();
-    setConnections(conns);
-    const defaultConn = conns.find(c => c.isDefault) || conns[0];
-    setForm(f => ({ ...f, connectionId: defaultConn?.id || "", port: getNextAvailablePort() }));
+    (async () => {
+      const conns = await getConnections();
+      setConnections(conns);
+      const defaultConn = conns.find(c => c.is_default) || conns[0];
+      const port = await getNextAvailablePort();
+      setForm(f => ({ ...f, connectionId: defaultConn?.id || "", port }));
+    })();
   }, []);
 
   const webhookSecret = generateWebhookSecret();
@@ -35,22 +38,27 @@ const CreateApp = ({ onBack, onCreated }: CreateAppProps) => {
   };
 
   const handleCreate = async () => {
-    const app: AppConfig = {
-      id: crypto.randomUUID(), connectionId: form.connectionId,
-      name: form.name.trim().toLowerCase().replace(/\s+/g, "-"),
-      repoUrl: form.repoUrl || undefined,
-      deployPath: form.deployPath || `/opt/cloudpanel/apps/${form.name.trim().toLowerCase().replace(/\s+/g, "-")}`,
-      domain: form.domain || undefined, port: form.port, buildCmd: form.buildCmd || undefined,
-      status: "idle", autoDeploy: true, webhookSecret, envVars: {}, createdAt: new Date().toISOString(),
-    };
-    const apps = [...getApps(), app];
-    saveApps(apps);
-    toast.success(`App "${app.name}" created!`);
-    const conn = connections.find(c => c.id === form.connectionId);
-    if (conn) {
-      try { await syncDeployConfigToAgent(conn, app); } catch { toast.error("Saved locally but failed to sync to agent"); }
-    }
-    onCreated(app);
+    try {
+      const app = await createApp({
+        connection_id: form.connectionId,
+        name: form.name.trim().toLowerCase().replace(/\s+/g, "-"),
+        repo_url: form.repoUrl || undefined,
+        deploy_path: form.deployPath || `/opt/cloudpanel/apps/${form.name.trim().toLowerCase().replace(/\s+/g, "-")}`,
+        domain: form.domain || undefined, port: form.port, build_cmd: form.buildCmd || undefined,
+        status: "idle", auto_deploy: true, webhook_secret: webhookSecret, env_vars: {},
+      });
+      toast.success(`App "${app.name}" created!`);
+      const conn = connections.find(c => c.id === form.connectionId);
+      if (conn) {
+        try {
+          await agentFetch(conn, `/deploy-configs/${app.id}`, {
+            method: "PUT",
+            body: JSON.stringify({ id: app.id, name: app.name, repoUrl: app.repo_url, deployPath: app.deploy_path, port: app.port, domain: app.domain, buildCmd: app.build_cmd, autoDeploy: app.auto_deploy ?? true, webhookSecret: app.webhook_secret, envVars: app.env_vars || {} }),
+          });
+        } catch { toast.error("Saved but failed to sync to agent"); }
+      }
+      onCreated(app);
+    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : "Failed to create app"); }
   };
 
   const copyText = (text: string, field: string) => {
@@ -61,7 +69,7 @@ const CreateApp = ({ onBack, onCreated }: CreateAppProps) => {
   };
 
   const conn = connections.find(c => c.id === form.connectionId);
-  const webhookUrl = conn ? `${conn.agentUrl.replace(/\/$/, '')}/webhook/github` : "";
+  const webhookUrl = conn ? `${conn.agent_url.replace(/\/$/, '')}/webhook/github` : "";
   const inputClass = "w-full px-3 py-2.5 rounded-md bg-secondary border border-border text-foreground text-sm font-mono placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary";
 
   if (connections.length === 0) {
@@ -96,20 +104,9 @@ const CreateApp = ({ onBack, onCreated }: CreateAppProps) => {
           <>
             <h3 className="text-sm font-semibold text-foreground">Name & Repository</h3>
             <div className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs text-muted-foreground">App Name *</label>
-                <input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="my-awesome-app" className={inputClass} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-muted-foreground">GitHub Repository URL</label>
-                <input type="text" value={form.repoUrl} onChange={e => setForm({ ...form, repoUrl: e.target.value })} placeholder="https://github.com/user/repo.git" className={inputClass} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-muted-foreground">Server</label>
-                <select value={form.connectionId} onChange={e => setForm({ ...form, connectionId: e.target.value })} className={inputClass}>
-                  {connections.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-                </select>
-              </div>
+              <div className="space-y-1.5"><label className="text-xs text-muted-foreground">App Name *</label><input type="text" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="my-awesome-app" className={inputClass} /></div>
+              <div className="space-y-1.5"><label className="text-xs text-muted-foreground">GitHub Repository URL</label><input type="text" value={form.repoUrl} onChange={e => setForm({ ...form, repoUrl: e.target.value })} placeholder="https://github.com/user/repo.git" className={inputClass} /></div>
+              <div className="space-y-1.5"><label className="text-xs text-muted-foreground">Server</label><select value={form.connectionId} onChange={e => setForm({ ...form, connectionId: e.target.value })} className={inputClass}>{connections.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}</select></div>
             </div>
           </>
         )}
@@ -117,22 +114,10 @@ const CreateApp = ({ onBack, onCreated }: CreateAppProps) => {
           <>
             <h3 className="text-sm font-semibold text-foreground">Configuration</h3>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs text-muted-foreground">Domain (optional)</label>
-                <input type="text" value={form.domain} onChange={e => setForm({ ...form, domain: e.target.value })} placeholder="myapp.example.com" className={inputClass} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-muted-foreground">Port</label>
-                <input type="number" value={form.port} onChange={e => setForm({ ...form, port: Number(e.target.value) })} className={inputClass} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-muted-foreground">Build Command</label>
-                <input type="text" value={form.buildCmd} onChange={e => setForm({ ...form, buildCmd: e.target.value })} className={inputClass} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-muted-foreground">Deploy Path</label>
-                <input type="text" value={form.deployPath} onChange={e => setForm({ ...form, deployPath: e.target.value })} placeholder={`/opt/cloudpanel/apps/${form.name || "app"}`} className={inputClass} />
-              </div>
+              <div className="space-y-1.5"><label className="text-xs text-muted-foreground">Domain (optional)</label><input type="text" value={form.domain} onChange={e => setForm({ ...form, domain: e.target.value })} placeholder="myapp.example.com" className={inputClass} /></div>
+              <div className="space-y-1.5"><label className="text-xs text-muted-foreground">Port</label><input type="number" value={form.port} onChange={e => setForm({ ...form, port: Number(e.target.value) })} className={inputClass} /></div>
+              <div className="space-y-1.5"><label className="text-xs text-muted-foreground">Build Command</label><input type="text" value={form.buildCmd} onChange={e => setForm({ ...form, buildCmd: e.target.value })} className={inputClass} /></div>
+              <div className="space-y-1.5"><label className="text-xs text-muted-foreground">Deploy Path</label><input type="text" value={form.deployPath} onChange={e => setForm({ ...form, deployPath: e.target.value })} placeholder={`/opt/cloudpanel/apps/${form.name || "app"}`} className={inputClass} /></div>
             </div>
           </>
         )}

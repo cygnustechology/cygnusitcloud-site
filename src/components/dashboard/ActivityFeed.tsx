@@ -10,7 +10,7 @@ const ActivityFeed = () => {
   const [conn, setConn] = useState<VMConnection | null>(null);
 
   const loadLogs = async () => {
-    const defaultConn = getDefaultConnection();
+    const defaultConn = await getDefaultConnection();
     setConn(defaultConn || null);
     if (!defaultConn) return;
     setLoading(true);

@@ -14,7 +14,7 @@ const StatsOverview = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchStats = async () => {
-    const defaultConn = getDefaultConnection();
+    const defaultConn = await getDefaultConnection();
     setConn(defaultConn || null);
     if (!defaultConn) { setError("no-connection"); return; }
     setLoading(true); setError(null);
