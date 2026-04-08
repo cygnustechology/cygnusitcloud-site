@@ -39,6 +39,14 @@ const Navbar = () => {
           >
             <a href="#contact">Get a Quote</a>
           </Button>
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="border-cygnus-red text-cygnus-red hover:bg-cygnus-red hover:text-white font-semibold uppercase tracking-wide"
+          >
+            <a href="/login">Login</a>
+          </Button>
         </div>
 
         <button
@@ -62,13 +70,21 @@ const Navbar = () => {
               {l.label}
             </a>
           ))}
-          <div className="px-6 pt-2">
+          <div className="px-6 pt-2 space-y-2">
             <Button
               asChild
               size="sm"
               className="w-full bg-cygnus-red hover:bg-cygnus-red/90 text-accent-foreground font-semibold uppercase tracking-wide"
             >
               <a href="#contact" onClick={() => setOpen(false)}>Get a Quote</a>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="w-full border-cygnus-red text-cygnus-red hover:bg-cygnus-red hover:text-white font-semibold uppercase tracking-wide"
+            >
+              <a href="/login" onClick={() => setOpen(false)}>Login</a>
             </Button>
           </div>
         </div>
