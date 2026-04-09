@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://103.152.12.106:4000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export async function apiFetch<T = unknown>(path: string, options?: RequestInit): Promise<T> {
   const token = localStorage.getItem("cygnus_token");
